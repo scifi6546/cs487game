@@ -42,7 +42,7 @@ namespace GameLib
 
 	bool Context::_initSubsystems() {
 		bool result = true;
-		int flags = IMG_INIT_JPG | IMG_INIT_JPG;
+		int flags = IMG_INIT_JPG | IMG_INIT_PNG;
 		int initFlags = IMG_Init(flags);
 		if (initFlags != flags) {
 			if (~initFlags & IMG_INIT_JPG) _setError("JPEG not supported");
