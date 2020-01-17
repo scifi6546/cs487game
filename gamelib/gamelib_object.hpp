@@ -15,6 +15,9 @@ namespace GameLib
 		using const_weak_ptr = const std::weak_ptr<Object>;
 		using const_shared_ptr = const std::shared_ptr<Object>;
 
+        shared_ptr getSharedPtr() { return shared_from_this(); }
+        weak_ptr getWeakPtr() { return shared_from_this(); }
+
 		// Returns the name of this object
 		const std::string& name() const { return name_; };
 

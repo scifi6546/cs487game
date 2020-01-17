@@ -18,5 +18,6 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <memory>
 
 #endif
