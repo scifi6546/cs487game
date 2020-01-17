@@ -6,6 +6,20 @@ We want to use the OpenGL Mathematics Library (GLM), SDL2, SDL2 (with JPEG suppo
 
      Z:\github\vcpkg> .\vcpkg install --recurse --triplet x64-windows glm sdl2 sdl2-image[libjpeg-turbo] sdl2-ttf sdl2-mixer[mpg123,libvorbis] czmq[curl,httpd,uuid]
 
+## Building with CMake
+
+```
+$ cd build
+$ cmake ..
+$ cmake --build .
+```
+
+## Adding files to CMakeLists.txt
+
+If you add files to the project, then be sure to add them to the CMakeLists.txt file to add them to the build. Since our main platform is Visual Studio, make sure they get added to the solutions and projects as well.
+
+WARNING: Do not overwrite the VS build with something made by CMake.
+
 ## GameLib
 
 ### `namespace GameLib`
