@@ -30,9 +30,17 @@ Every part of the game library will use the namespace `GameLib` so we can use ni
 
 This class is responsible for managing the initialization/shutdown of external libraries in addition to the screen.
 
-### `Entity`
+### `Object`
 
-This class is a base class for managing any kind of game entity used in the engine. We use shallow inheritance via virtual functions to manage all the *"physical"* objects in the game world.
+This class is a base class for managing any kind of game entity used in the engine.
+
+### `Actor`
+
+This class (child class of  `Object`) is a type of object that can interact in the game world. Think of these as *"physical"* objects.
+
+### `World`
+
+This class (child class of `Object`) manages a list of `Actor`s that interact in the game world.
 
 ## SimpleGame
 
