@@ -21,7 +21,7 @@ namespace GameLib
 		return tiles[y * WorldSizeX + x];
 	}
 
-	std::istream& World::readCharSteam(std::istream& s) {
+	std::istream& World::readCharStream(std::istream& s) {
 		std::string cmd;
 		s >> cmd;
 		if (cmd == "row") {
@@ -30,7 +30,7 @@ namespace GameLib
 		return s;
 	}
 
-	std::ostream& World::writeCharStream(std::ostream& s) {
+	std::ostream& World::writeCharStream(std::ostream& s) const {
 		// TODO: rows should be written out with characters representing background tiles
 		// Main Idea is to use a command with parameters
 		// Example:

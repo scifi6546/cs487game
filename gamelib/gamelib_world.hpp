@@ -30,7 +30,7 @@ namespace GameLib
 		void setTile(unsigned x, unsigned y, Actor::shared_ptr ptr);
 		Actor::shared_ptr getTile(unsigned x, unsigned y);
 
-		std::istream& readCharSteam(std::istream& s) override;
+		std::istream& readCharStream(std::istream& s) override;
 		std::ostream& writeCharStream(std::ostream& s) const override;
 
 		std::vector<Actor::shared_ptr> tiles;
