@@ -5,6 +5,7 @@
 
 namespace GameLib
 {
+	constexpr int WindowDefault = 0;
 	constexpr int WindowFullscreen = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	constexpr int WindowBorderless = SDL_WINDOW_BORDERLESS;
 	constexpr int WindowResizeable = SDL_WINDOW_RESIZABLE;
@@ -30,10 +31,21 @@ namespace GameLib
 			std::map<int, int> keys;
 			int mod{ 0 };
 		} keyboard;
+
+		static constexpr int MaxJoysticks{ 4 };
+		unsigned joystickCount{ 0 };
+		struct JOYSTICKSTATE {
+			bool enabled{ false };
+			SDL_GameController* controller{ nullptr };
+			std::string name;
+		} joysticks[MaxJoysticks];
 	private:
 		bool _init();
 		bool _initSubsystems();
 		bool _initScreen(int width, int height, int windowFlags);
+		void _openGameControllers();
+		void _closeGameControllers();
+		void _updateGameControllers();
 		void _kill();
 		void _setError(std::string&& errorString);
 		bool initialized_{ false };

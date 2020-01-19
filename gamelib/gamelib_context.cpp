@@ -37,6 +37,8 @@ namespace GameLib
 
 		keyboard.scancodes.resize(SDL_NUM_SCANCODES);
 
+		_openGameControllers();
+
 		return true;
 	}
 
@@ -71,10 +73,61 @@ namespace GameLib
 	}
 
 	void Context::_kill() {
+		_closeGameControllers();
 		SDL_Quit();
 	}
 
+	void Context::_openGameControllers() {
+		joystickCount = std::min<int>(MaxJoysticks, SDL_NumJoysticks());
+
+		for (int i = 0; i < MaxJoysticks; i++) {
+			JOYSTICKSTATE& j = joysticks[i];
+			if (SDL_IsGameController(i)) {
+				// do not open controllers already opened
+				if (j.controller) continue;
+				j.controller = SDL_GameControllerOpen(i);
+				// reset this joystick if it wasn't opened
+				if (!j.controller) {
+					j = JOYSTICKSTATE();
+				} else {
+					j.name = SDL_GameControllerNameForIndex(i);
+					HFLOGINFO("Joystick %i '%s' connected", i, j.name.c_str());
+				}
+				j.enabled = j.controller != nullptr;
+			}
+			else if (j.enabled) {
+				HFLOGINFO("Joystick %i '%s' disconnected", i, j.name.c_str());
+				SDL_GameControllerClose(j.controller);
+				j = JOYSTICKSTATE();
+			}
+		}
+	}
+
+	void Context::_closeGameControllers() {
+		for (int i = 0; i < MaxJoysticks; i++) {
+			JOYSTICKSTATE& j = joysticks[i];
+			if (!j.controller) continue;
+			HFLOGINFO("Joystick %i '%s' closed", i, j.name.c_str());
+			SDL_GameControllerClose(j.controller);
+			j = JOYSTICKSTATE();
+		}
+	}
+
+	void Context::_updateGameControllers() {
+		for (int i = 0; i < joystickCount; i++) {
+			JOYSTICKSTATE& j = joysticks[i];
+			if (!j.enabled) continue;
+		}
+	}
+
 	int Context::getEvents() {
+		static int checkForGameControllers = 100;
+
+		if (--checkForGameControllers <= 0) {
+			checkForGameControllers = 100;
+			_openGameControllers();
+		}
+
 		int eventCount{ 0 };
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
