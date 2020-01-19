@@ -12,6 +12,6 @@ namespace GameLib
 	void Actor::tick(float deltaTime) {}
 
 	void Actor::startOverlap(Object::const_weak_ptr otherObject) {}
-	
+
 	void Actor::endOverlap(Object::const_weak_ptr otherObject) {}
 }

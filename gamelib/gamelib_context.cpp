@@ -89,7 +89,8 @@ namespace GameLib
 				// reset this joystick if it wasn't opened
 				if (!j.controller) {
 					j = JOYSTICKSTATE();
-				} else {
+				}
+				else {
 					j.name = SDL_GameControllerNameForIndex(i);
 					HFLOGINFO("Joystick %i '%s' connected", i, j.name.c_str());
 				}
@@ -114,7 +115,7 @@ namespace GameLib
 	}
 
 	void Context::_updateGameControllers() {
-		for (int i = 0; i < joystickCount; i++) {
+		for (unsigned i = 0; i < joystickCount; i++) {
 			JOYSTICKSTATE& j = joysticks[i];
 			if (!j.enabled) continue;
 		}
