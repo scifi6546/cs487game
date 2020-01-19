@@ -6,7 +6,7 @@
 #pragma comment(lib, "gamelib.lib")
 
 int main(int argc, char** argv) {
-	GameLib::Context context(1000, 600, GameLib::WindowFullscreen);
+	GameLib::Context context(1280, 720, GameLib::WindowDefault);
 
 	while (!context.quitRequested) {
 		context.getEvents();
