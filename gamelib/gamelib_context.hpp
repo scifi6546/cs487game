@@ -20,9 +20,36 @@ namespace GameLib
 		bool hadError() const;
 		const std::string errorString() const { return errorString_; }
 
+		// handle all SDL events
 		int getEvents();
+
+		// clear the screen to a color
 		void clearScreen(glm::u8vec4 color);
+
+		// swap the back buffer to the front
 		void swapBuffers();
+
+		// add a search path for loading files
+		void addSearchPath(const std::string& path);
+
+		// clear all search paths for loading files
+		void clearSearchPaths();
+
+		// find a valid path using the configured search paths
+		// if file is not a regular file, returns an empty string
+		std::string findSearchPath(const std::string& filename) const;
+
+		// load the filename from the current directory, or the search paths
+		SDL_Surface* loadImage(const std::string& filename);
+
+		// frees all currently loaded images
+		void freeImages();
+
+		// returns true if the resource name is loaded
+		bool imageLoaded(const std::string& resourceName) const;
+
+		// returns a pointer to the SDL Surface, or nullptr if it does not exist
+		SDL_Surface* getImage(const std::string& resourceName) const;
 
 		int quitRequested{ 0 };
 
@@ -51,6 +78,9 @@ namespace GameLib
 		bool initialized_{ false };
 		mutable bool hadError_{ false };
 		std::string errorString_;
+
+		std::vector<std::string> searchPaths_;
+		std::map<std::string, SDL_Surface*> images_;
 
 		SDL_Window* window_{ nullptr };
 		SDL_Renderer* renderer_{ nullptr };

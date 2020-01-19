@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <filesystem>
 #include <gamelib.hpp>
 
 namespace GameLib
@@ -161,4 +162,76 @@ namespace GameLib
 	}
 
 	void Context::swapBuffers() { SDL_RenderPresent(renderer_); }
+
+	void Context::addSearchPath(const std::string& path) {
+		if (path.empty()) {
+			searchPaths_.push_back("./");
+			return;
+		}
+
+		// normalize path to use '/' characters
+		std::string search_path{ path };
+		for (auto& c : search_path) {
+			if (c == '\\') c = '/';
+		}
+		if (search_path.back() != '/') search_path.push_back('/');
+		// add path if it exists and is a folder?
+		if (std::filesystem::is_directory(search_path)) {
+			searchPaths_.push_back(search_path);
+		}
+		else {
+			HFLOGERROR("'%s' is not a directory", search_path.c_str());
+		}
+	}
+
+	void Context::clearSearchPaths() {
+		searchPaths_.clear();
+	}
+
+	std::string Context::findSearchPath(const std::string& filename) const {
+		std::string path;
+		if (std::filesystem::is_regular_file(filename)) {
+			path = filename;
+		}
+		else for (auto& dir : searchPaths_) {
+			std::string p{ dir + filename };
+			if (std::filesystem::is_regular_file(p)) {
+				path = p;
+				break;
+			}
+		}
+		return path;
+	}
+
+	SDL_Surface* Context::loadImage(const std::string& filename) {
+		std::filesystem::path p = findSearchPath(filename);
+		if (p.empty()) return nullptr;
+		std::string resourceName = std::move(p.filename().string());
+		if (images_.count(resourceName)) {
+			SDL_FreeSurface(images_[resourceName]);
+		}
+		SDL_Surface* img = IMG_Load(resourceName.c_str());
+		if (!img) return nullptr;
+		images_[resourceName] = img;
+		return img;
+	}
+
+	void Context::freeImages() {
+		for (auto& [k, v] : images_) {
+			SDL_FreeSurface(v);
+			v = nullptr;
+		}
+		images_.clear();
+	}
+
+	bool Context::imageLoaded(const std::string& resourceName) const {
+		return images_.count(resourceName);
+	}
+
+	SDL_Surface* Context::getImage(const std::string& resourceName) const {
+		if (images_.count(resourceName)) {
+			return images_.at(resourceName);
+		}
+		return nullptr;
+	}
 }
