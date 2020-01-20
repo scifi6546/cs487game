@@ -36,6 +36,10 @@ int main(int argc, char** argv) {
             context.keyboard.scancodes[SDL_SCANCODE_0] = 0;
             context.playAudioClip(0);
         }
+        if (context.keyboard.scancodes[SDL_SCANCODE_1]) {
+            context.keyboard.scancodes[SDL_SCANCODE_1] = 0;
+            context.playAudioClip(1);
+        }
         context.clearScreen({ 255, 0, 255, 255 });
 
         // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
