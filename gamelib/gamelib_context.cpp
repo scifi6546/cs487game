@@ -1,5 +1,18 @@
 #include "pch.h"
+
+#ifdef __unix__
+#if __cplusplus >= 201703L && __has_include(<filesystem>)
 #include <filesystem>
+namespace filesystem = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace filesystem = std::experimental::filesystem;
+#endif
+#else
+#include <filesystem>
+namespace filesystem = std::filesystem;
+#endif
+
 #include <gamelib.hpp>
 
 namespace GameLib {
@@ -81,6 +94,14 @@ namespace GameLib {
             result = false;
         }
 
+		constexpr int frequency = 48000;
+		constexpr int channels = 2;
+        if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, 4096) != 0) {
+            HFLOGERROR("Failed to open audio: %s", SDL_GetError());
+        } else {
+            HFLOGINFO("Audio Device:      %s", SDL_GetAudioDeviceName(0, 0));
+            HFLOGINFO("Audio initialized: %dHz %d channels", frequency, channels);
+        }
         return result;
     }
 
@@ -92,6 +113,8 @@ namespace GameLib {
         _closeGameControllers();
         freeImages();
         freeTilesets();
+        freeAudioClips();
+        Mix_CloseAudio();
         SDL_Quit();
     }
 
@@ -245,7 +268,7 @@ namespace GameLib {
         if (search_path.back() != '/')
             search_path.push_back('/');
         // add path if it exists and is a folder?
-        if (std::filesystem::is_directory(search_path)) {
+        if (filesystem::is_directory(search_path)) {
             searchPaths_.push_back(search_path);
         } else {
             HFLOGWARN("'%s' is not a directory", search_path.c_str());
@@ -256,12 +279,12 @@ namespace GameLib {
 
     std::string Context::findSearchPath(const std::string& filename) const {
         std::string path;
-        if (std::filesystem::is_regular_file(filename)) {
+        if (filesystem::is_regular_file(filename)) {
             path = filename;
         } else
             for (auto& dir : searchPaths_) {
                 std::string p{ dir + filename };
-                if (std::filesystem::is_regular_file(p)) {
+                if (filesystem::is_regular_file(p)) {
                     path = p;
                     break;
                 }
@@ -277,7 +300,7 @@ namespace GameLib {
         std::string p = findSearchPath(filename);
         if (p.empty())
             return nullptr;
-        std::filesystem::path path = p;
+        filesystem::path path = p;
         std::string resourceName = std::move(path.filename().string());
         if (images_.count(resourceName)) {
             SDL_DestroyTexture(images_[resourceName].texture);
@@ -290,6 +313,7 @@ namespace GameLib {
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer_, img);
         images_[resourceName].texture = texture;
         SDL_FreeSurface(img);
+        HFLOGINFO("loaded '%s'", filename.c_str());
         return texture;
     }
 
@@ -368,6 +392,7 @@ namespace GameLib {
                 tileCount++;
             }
         }
+        HFLOGINFO("loaded '%s'", filename.c_str());
         return tileCount;
     }
 
@@ -387,5 +412,58 @@ namespace GameLib {
         if (tileId >= tileset.size())
             return nullptr;
         return &tileset[tileId];
+    }
+
+    //////////////////////////////////////////////////////////////////
+    // AUDIO LOADING /////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+
+    AUDIOINFO* Context::initAudioClip(int clipId) {
+        if (audioClips_[clipId]) {
+            audioClips_[clipId].free();
+            audioClips_[clipId] = AUDIOINFO();
+        }
+        return &audioClips_[clipId];
+    }
+
+    AUDIOINFO* Context::getAudioClip(int clipId) {
+        if (audioClips_.count(clipId))
+            return &audioClips_[clipId];
+        return nullptr;
+    }
+
+    void Context::freeAudioClips() {
+        for (auto& [k, v] : audioClips_) {
+            v.free();
+        }
+        audioClips_.clear();
+    }
+
+    AUDIOINFO* Context::loadAudioClip(int clipId, const std::string& filename) {
+        std::string p = findSearchPath(filename);
+        if (p.empty())
+            return nullptr;
+        AUDIOINFO& audio = *initAudioClip(clipId);
+
+        Mix_Chunk* chunk = Mix_LoadWAV(p.c_str());
+        if (!chunk) {
+            HFLOGWARN("Unable to load '%s'", filename.c_str());
+            HFLOGWARN("Mix_LoadWAV returned '%s'", Mix_GetError());
+            return nullptr;
+        }
+        filesystem::path path = p;
+        audio.chunk = chunk;
+        audio.name = path.filename().string();
+        HFLOGINFO("loaded '%s'", filename.c_str());
+        return &audio;
+    }
+
+    void Context::playAudioClip(int clipId) {
+        if (!audioDeviceId_)
+            return;
+        AUDIOINFO* audio = getAudioClip(clipId);
+        if (!audio)
+            return;
+        Mix_PlayChannel(-1, audio->chunk, 0);
     }
 }

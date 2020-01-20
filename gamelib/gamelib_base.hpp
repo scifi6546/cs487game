@@ -33,6 +33,32 @@ struct TILEIMAGE {
     int tilesetId{ 0 };
     int w{ 0 };
     int h{ 0 };
+
+    //~TILEIMAGE() {
+    //    if (texture) {
+    //        HFLOGERROR("Should not delete texture in destructor");
+    //        SDL_DestroyTexture(texture);
+    //        texture = nullptr;
+    //    }
+    //}
+};
+
+struct AUDIOINFO {
+    Mix_Chunk* chunk{ nullptr };
+    std::string name;
+
+    operator bool() const { return chunk != nullptr; }
+
+    void free() {
+        Mix_FreeChunk(chunk);
+        chunk = nullptr;
+    }
+
+    ~AUDIOINFO() {
+        if (chunk) {
+            HFLOGERROR("Should not delete sound in destructor");
+        }
+    }
 };
 
 #endif

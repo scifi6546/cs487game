@@ -23,9 +23,9 @@ namespace GameLib {
         bool hadError() const;
         const std::string errorString() const { return errorString_; }
 
-		//////////////////////////////////////////////////////////////
-		// SEARCH PATHS //////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+        // SEARCH PATHS //////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
 
         // add a search path for loading files
         void addSearchPath(const std::string& path);
@@ -87,6 +87,13 @@ namespace GameLib {
         // AUDIO CODE ////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////
 
+        AUDIOINFO* initAudioClip(int clipId);
+        AUDIOINFO* getAudioClip(int clipId);
+        void freeAudioClips();
+        int getAudioClipCount() const { return (int)audioClips_.size(); }
+        AUDIOINFO* loadAudioClip(int clipId, const std::string& filename);
+        void playAudioClip(int clipId);
+
         //////////////////////////////////////////////////////////////
         // EVENT HANDLING CODE ///////////////////////////////////////
         //////////////////////////////////////////////////////////////
@@ -123,9 +130,12 @@ namespace GameLib {
         std::string errorString_;
         SDL_Window* window_{ nullptr };
         SDL_Renderer* renderer_{ nullptr };
+        SDL_AudioSpec audioSpec_;
+        SDL_AudioDeviceID audioDeviceId_{ 0 }; 
         std::vector<std::string> searchPaths_;
         std::map<std::string, TILEIMAGE> images_;
         std::map<int, std::vector<TILEIMAGE>> tilesets_;
+        std::map<int, AUDIOINFO> audioClips_;
 
         bool _init();
         bool _initSubsystems();
