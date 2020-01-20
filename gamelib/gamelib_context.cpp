@@ -203,22 +203,24 @@ namespace GameLib
 		return path;
 	}
 
-	SDL_Surface* Context::loadImage(const std::string& filename) {
+	SDL_Texture* Context::loadImage(const std::string& filename) {
 		std::filesystem::path p = findSearchPath(filename);
 		if (p.empty()) return nullptr;
 		std::string resourceName = std::move(p.filename().string());
 		if (images_.count(resourceName)) {
-			SDL_FreeSurface(images_[resourceName]);
+			SDL_DestroyTexture(images_[resourceName]);
 		}
 		SDL_Surface* img = IMG_Load(resourceName.c_str());
 		if (!img) return nullptr;
-		images_[resourceName] = img;
-		return img;
+		SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer_, img);
+		images_[resourceName] = tex;
+		SDL_FreeSurface(img);
+		return tex;
 	}
 
 	void Context::freeImages() {
 		for (auto& [k, v] : images_) {
-			SDL_FreeSurface(v);
+			SDL_DestroyTexture(v);
 			v = nullptr;
 		}
 		images_.clear();
@@ -228,7 +230,7 @@ namespace GameLib
 		return images_.count(resourceName);
 	}
 
-	SDL_Surface* Context::getImage(const std::string& resourceName) const {
+	SDL_Texture* Context::getImage(const std::string& resourceName) const {
 		if (images_.count(resourceName)) {
 			return images_.at(resourceName);
 		}

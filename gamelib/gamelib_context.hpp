@@ -40,7 +40,7 @@ namespace GameLib
 		std::string findSearchPath(const std::string& filename) const;
 
 		// load the filename from the current directory, or the search paths
-		SDL_Surface* loadImage(const std::string& filename);
+		SDL_Texture* loadImage(const std::string& filename);
 
 		// frees all currently loaded images
 		void freeImages();
@@ -49,7 +49,7 @@ namespace GameLib
 		bool imageLoaded(const std::string& resourceName) const;
 
 		// returns a pointer to the SDL Surface, or nullptr if it does not exist
-		SDL_Surface* getImage(const std::string& resourceName) const;
+		SDL_Texture* getImage(const std::string& resourceName) const;
 
 		int quitRequested{ 0 };
 
@@ -80,7 +80,7 @@ namespace GameLib
 		std::string errorString_;
 
 		std::vector<std::string> searchPaths_;
-		std::map<std::string, SDL_Surface*> images_;
+		std::map<std::string, SDL_Texture*> images_;
 
 		SDL_Window* window_{ nullptr };
 		SDL_Renderer* renderer_{ nullptr };
