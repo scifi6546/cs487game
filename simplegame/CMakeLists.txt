@@ -8,7 +8,7 @@ add_executable(simplegame
     main.cpp
     )
 target_link_libraries(simplegame gamelib)
-
+target_link_libraries(simplegame stdc++fs)
 find_library(SDL2_LIB NAMES SDL2)
 find_library(SDL2_IMAGE_LIB NAMES SDL2_image)
 find_library(SDL2_MIXER_LIB NAMES SDL2_mixer)
