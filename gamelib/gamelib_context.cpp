@@ -240,4 +240,13 @@ namespace GameLib
 		}
 		return nullptr;
 	}
+
+	int Context::drawTexture(glm::vec2 position, glm::vec2 size, SDL_Texture* texture) {
+		if (!texture) return -1;
+		SDL_Rect dstrect{
+			(int)position.x, (int)position.y,
+			(int)size.x, (int)size.y
+		};
+		return SDL_RenderCopy(renderer_, texture, nullptr, &dstrect);
+	}
 }

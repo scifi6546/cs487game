@@ -51,16 +51,26 @@ namespace GameLib
 		// returns a pointer to the SDL Surface, or nullptr if it does not exist
 		SDL_Texture* getImage(const std::string& resourceName) const;
 
+		// draws a rectangle to the screen. returns 0 if success, -1 if error
+		int drawTexture(glm::vec2 position, glm::vec2 size, SDL_Texture* texture);
+
+		// set quitRequested to a nonzero value to indicate the game loop should end
 		int quitRequested{ 0 };
 
+		// keyboard is used to represent the current keys pressed
 		struct KEYBOARDSTATE {
 			std::vector<int> scancodes;
 			std::map<int, int> keys;
 			int mod{ 0 };
 		} keyboard;
 
+		// MaxJoysticks reflects the XInput library max of four controllers
 		static constexpr int MaxJoysticks{ 4 };
+		
+		// This is the number of joysticks available
 		unsigned joystickCount{ 0 };
+
+		// This is an array of game pad information. If controller pointer is not null, it is available
 		struct JOYSTICKSTATE {
 			bool enabled{ false };
 			SDL_GameController* controller{ nullptr };
