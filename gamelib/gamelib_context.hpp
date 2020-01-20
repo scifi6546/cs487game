@@ -15,18 +15,17 @@ namespace GameLib {
         Context(int width, int height, int flags = WindowResizeable);
         ~Context();
 
+        //////////////////////////////////////////////////////////////
+        // ERROR HANDLING ////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+
         operator bool() const { return initialized_; }
         bool hadError() const;
         const std::string errorString() const { return errorString_; }
 
-        // handle all SDL events
-        int getEvents();
-
-        // clear the screen to a color
-        void clearScreen(glm::u8vec4 color);
-
-        // swap the back buffer to the front
-        void swapBuffers();
+		//////////////////////////////////////////////////////////////
+		// SEARCH PATHS //////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////
 
         // add a search path for loading files
         void addSearchPath(const std::string& path);
@@ -37,6 +36,16 @@ namespace GameLib {
         // find a valid path using the configured search paths
         // if file is not a regular file, returns an empty string
         std::string findSearchPath(const std::string& filename) const;
+
+        //////////////////////////////////////////////////////////////
+        // DRAWING AND IMAGES ////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+
+        // clear the screen to a color
+        void clearScreen(glm::u8vec4 color);
+
+        // swap the back buffer to the front
+        void swapBuffers();
 
         // load the filename from the current directory, or the search paths
         SDL_Texture* loadImage(const std::string& filename);
@@ -62,7 +71,7 @@ namespace GameLib {
         // returns a pointer to the SDL_Texture with no error checking
         TILEIMAGE* getTileFast(int tilesetId, int tileId) { return &tilesets_[tilesetId][tileId]; }
 
-		// returns number of tiles in a tileset
+        // returns number of tiles in a tileset
         int getTileCount(int tilesetId) { return (int)tilesets_.at(tilesetId).size(); }
 
         // draws a rectangle to the screen. returns 0 if success, -1 if error
@@ -73,6 +82,17 @@ namespace GameLib {
 
         // draws a rotated, centerable, flipable rectangle to the screen. returns 0 if success, -1 if error
         int drawTexture(int tilesetId, int tileId, SPRITEINFO& spriteInfo);
+
+        //////////////////////////////////////////////////////////////
+        // AUDIO CODE ////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+
+        //////////////////////////////////////////////////////////////
+        // EVENT HANDLING CODE ///////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+
+        // handle all SDL events
+        int getEvents();
 
         // set quitRequested to a nonzero value to indicate the game loop should end
         int quitRequested{ 0 };
@@ -98,6 +118,15 @@ namespace GameLib {
         } joysticks[MaxJoysticks];
 
     private:
+        bool initialized_{ false };
+        mutable bool hadError_{ false };
+        std::string errorString_;
+        SDL_Window* window_{ nullptr };
+        SDL_Renderer* renderer_{ nullptr };
+        std::vector<std::string> searchPaths_;
+        std::map<std::string, TILEIMAGE> images_;
+        std::map<int, std::vector<TILEIMAGE>> tilesets_;
+
         bool _init();
         bool _initSubsystems();
         bool _initScreen(int width, int height, int windowFlags);
@@ -107,19 +136,8 @@ namespace GameLib {
         void _kill();
         void _setError(std::string&& errorString);
 
-        bool initialized_{ false };
-        mutable bool hadError_{ false };
-        std::string errorString_;
-
-        std::vector<std::string> searchPaths_;
-        std::map<std::string, TILEIMAGE> images_;
-        std::map<int, std::vector<TILEIMAGE>> tilesets_;
-
         std::vector<TILEIMAGE>& _initTileset(int i);
         int _addTile(int tilesetId, SDL_Surface* surface);
-
-        SDL_Window* window_{ nullptr };
-        SDL_Renderer* renderer_{ nullptr };
     };
 }
 
