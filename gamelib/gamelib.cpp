@@ -4,8 +4,6 @@
 #include "pch.h"
 #include <gamelib.hpp>
 
+namespace GameLib {
 
-namespace GameLib
-{
-	
 }
