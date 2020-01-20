@@ -14,6 +14,15 @@ $ cmake ..
 $ cmake --build .
 ```
 
+## Linux
+Install g++-9 (Required to use std::filesystem on ubuntu), cmake, make, SDL2_ttf, SDL2_mixer, and CZMQ with your 
+preferred pacakge manager. Next run
+```
+cmake .
+make
+./simplegame/simplegame
+```
+
 ## Adding files to CMakeLists.txt
 
 If you add files to the project, then be sure to add them to the CMakeLists.txt file to add them to the build. Since our main platform is Visual Studio, make sure they get added to the solutions and projects as well.
