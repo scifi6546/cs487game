@@ -112,7 +112,7 @@ namespace GameLib {
         std::string errorString_;
 
         std::vector<std::string> searchPaths_;
-        std::map<std::string, SDL_Texture*> images_;
+        std::map<std::string, TILEIMAGE> images_;
         std::map<int, std::vector<TILEIMAGE>> tilesets_;
 
         std::vector<TILEIMAGE>& _initTileset(int i);

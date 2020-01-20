@@ -280,23 +280,23 @@ namespace GameLib {
         std::filesystem::path path = p;
         std::string resourceName = std::move(path.filename().string());
         if (images_.count(resourceName)) {
-            SDL_DestroyTexture(images_[resourceName]);
+            SDL_DestroyTexture(images_[resourceName].texture);
         }
         SDL_Surface* img = IMG_Load(p.c_str());
         if (!img) {
             HFLOGERROR("'%s' not found", resourceName.c_str());
             return nullptr;
         }
-        SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer_, img);
-        images_[resourceName] = tex;
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer_, img);
+        images_[resourceName].texture = texture;
         SDL_FreeSurface(img);
-        return tex;
+        return texture;
     }
 
     void Context::freeImages() {
         for (auto& [k, v] : images_) {
-            SDL_DestroyTexture(v);
-            v = nullptr;
+            SDL_DestroyTexture(v.texture);
+            v.texture = nullptr;
         }
         images_.clear();
     }
@@ -305,7 +305,7 @@ namespace GameLib {
 
     SDL_Texture* Context::getImage(const std::string& resourceName) const {
         if (images_.count(resourceName)) {
-            return images_.at(resourceName);
+            return images_.at(resourceName).texture;
         }
         return nullptr;
     }
