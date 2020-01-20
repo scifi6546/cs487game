@@ -3,6 +3,10 @@
 #include <gamelib.hpp>
 
 namespace GameLib {
+    //////////////////////////////////////////////////////////////////
+    // CONSTRUCTOR/DESTRUCTOR ////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+
     Context::Context(int width, int height, int windowFlags) {
         if (!_init())
             return;
@@ -12,6 +16,10 @@ namespace GameLib {
     }
 
     Context::~Context() { _kill(); }
+
+    //////////////////////////////////////////////////////////////////
+    // ERROR HANDLING ////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 
     bool Context::hadError() const {
         bool retError = hadError_;
@@ -24,6 +32,10 @@ namespace GameLib {
         HFLOGWARN("Error detected: %s", errorString.c_str());
         hadError_ = true;
     }
+
+    //////////////////////////////////////////////////////////////////
+    // INITIALIZATION / SHUTDOWN /////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 
     bool Context::_init() {
         if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -78,8 +90,14 @@ namespace GameLib {
 
     void Context::_kill() {
         _closeGameControllers();
+        freeImages();
+        freeTilesets();
         SDL_Quit();
     }
+
+    //////////////////////////////////////////////////////////////////
+    // GAME CONTROLLERS //////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 
     void Context::_openGameControllers() {
         joystickCount = std::min<int>(MaxJoysticks, SDL_NumJoysticks());
@@ -126,6 +144,10 @@ namespace GameLib {
         }
     }
 
+    //////////////////////////////////////////////////////////////////
+    // EVENT HANDLING ////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+
     int Context::getEvents() {
         static int checkForGameControllers = 100;
 
@@ -160,12 +182,53 @@ namespace GameLib {
         return eventCount;
     }
 
+    //////////////////////////////////////////////////////////////////
+    // DRAWING ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+
+    int Context::drawTexture(glm::vec2 position, glm::vec2 size, SDL_Texture* texture) {
+        if (!texture)
+            return -1;
+        SDL_Rect dstrect{ (int)position.x, (int)position.y, (int)size.x, (int)size.y };
+        return SDL_RenderCopy(renderer_, texture, nullptr, &dstrect);
+    }
+
+    int Context::drawTexture(glm::vec2 position, int tilesetId, int tileId) {
+#ifndef _DEBUG
+        TILEIMAGE* t = getTileFast(tilesetId, tileId);
+#else
+        TILEIMAGE* t = getTile(tilesetId, tileId);
+#endif
+        if (!t)
+            return -1;
+        SDL_Rect dstrect{ (int)position.x, (int)position.y, t->w, t->h };
+        return SDL_RenderCopy(renderer_, t->texture, nullptr, &dstrect);
+    }
+
+    int Context::drawTexture(int tilesetId, int tileId, SPRITEINFO& spriteInfo) {
+#ifndef _DEBUG
+        TILEIMAGE* t = getTileFast(tilesetId, tileId);
+#else
+        TILEIMAGE* t = getTile(tilesetId, tileId);
+#endif
+        if (!t)
+            return -1;
+        SDL_Rect dstrect{ (int)spriteInfo.position.x, (int)spriteInfo.position.y, t->w, t->h };
+        SDL_Point center{ (int)spriteInfo.center.x, (int)spriteInfo.center.y };
+        SDL_RendererFlip flip = (spriteInfo.flipFlags & 1) ? SDL_FLIP_HORIZONTAL : (spriteInfo.flipFlags & 2) ? SDL_FLIP_VERTICAL : SDL_FLIP_NONE;
+        return SDL_RenderCopyEx(renderer_, t->texture, nullptr, &dstrect, spriteInfo.angle, &center, flip);
+    }
+
     void Context::clearScreen(glm::u8vec4 color) {
         SDL_SetRenderDrawColor(renderer_, color.r, color.g, color.b, color.a);
         SDL_RenderClear(renderer_);
     }
 
     void Context::swapBuffers() { SDL_RenderPresent(renderer_); }
+
+    //////////////////////////////////////////////////////////////////
+    // SEARCH PATHS //////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 
     void Context::addSearchPath(const std::string& path) {
         if (path.empty()) {
@@ -185,7 +248,7 @@ namespace GameLib {
         if (std::filesystem::is_directory(search_path)) {
             searchPaths_.push_back(search_path);
         } else {
-            HFLOGERROR("'%s' is not a directory", search_path.c_str());
+            HFLOGWARN("'%s' is not a directory", search_path.c_str());
         }
     }
 
@@ -205,6 +268,10 @@ namespace GameLib {
             }
         return path;
     }
+
+    //////////////////////////////////////////////////////////////////
+    // IMAGES ////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 
     SDL_Texture* Context::loadImage(const std::string& filename) {
         std::string p = findSearchPath(filename);
@@ -243,10 +310,82 @@ namespace GameLib {
         return nullptr;
     }
 
-    int Context::drawTexture(glm::vec2 position, glm::vec2 size, SDL_Texture* texture) {
-        if (!texture)
-            return -1;
-        SDL_Rect dstrect{ (int)position.x, (int)position.y, (int)size.x, (int)size.y };
-        return SDL_RenderCopy(renderer_, texture, nullptr, &dstrect);
+    //////////////////////////////////////////////////////////////////
+    // TILESET ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+
+    std::vector<TILEIMAGE>& Context::_initTileset(int id) {
+        if (!tilesets_.count(id)) {
+            auto& tileset = tilesets_[id];
+            tileset.clear();
+        } else {
+            auto& tileset = tilesets_[id];
+            for (auto& t : tileset) {
+                if (t.texture) {
+                    SDL_DestroyTexture(t.texture);
+                }
+                t = TILEIMAGE();
+            }
+            tilesets_[id].clear();
+        }
+        return tilesets_[id];
+    }
+
+    int Context::_addTile(int tilesetId, SDL_Surface* surface) {
+        auto& tileset = tilesets_[tilesetId];
+        TILEIMAGE t;
+        t.texture = SDL_CreateTextureFromSurface(renderer_, surface);
+        if (!t.texture)
+            return 0;
+        t.tileId = (int)tileset.size();
+        t.tilesetId = tilesetId;
+        t.w = surface->w;
+        t.h = surface->h;
+        tileset.push_back(t);
+        return t.tileId;
+    }
+
+    int Context::loadTileset(int tilesetId, int w, int h, const std::string& filename) {
+        std::string p = findSearchPath(filename);
+        if (p.empty())
+            return 0;
+        SDL_Surface* surface = IMG_Load(p.c_str());
+        if (!surface)
+            return 0;
+        SDL_Surface* tile = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_RGBA32);
+        if (!tile) {
+            SDL_FreeSurface(surface);
+            return 0;
+        }
+        int tileCount = 0;
+        SDL_Rect dstrect{ 0, 0, w, h };
+        auto tileset = _initTileset(tilesetId);
+        for (int y = 0; y < surface->h; y += h) {
+            for (int x = 0; x < surface->w; x += w) {
+                SDL_Rect srcrect{ x, y, w, h };
+                SDL_BlitSurface(surface, &srcrect, tile, &dstrect);
+                _addTile(tilesetId, tile);
+                tileCount++;
+            }
+        }
+        return tileCount;
+    }
+
+    void Context::freeTilesets() {
+        for (auto& [k, v] : tilesets_) {
+            for (auto& t : v) {
+                SDL_DestroyTexture(t.texture);
+                t.texture = nullptr;
+            }
+        }
+    }
+
+    TILEIMAGE* Context::getTile(int tilesetId, int tileId) {
+        if (!tilesets_.count(tilesetId))
+            return nullptr;
+        auto& tileset = tilesets_.at(tilesetId);
+        if (tileId >= tileset.size())
+            return nullptr;
+        return &tileset[tileId];
     }
 }
