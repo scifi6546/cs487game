@@ -204,14 +204,18 @@ namespace GameLib
 	}
 
 	SDL_Texture* Context::loadImage(const std::string& filename) {
-		std::filesystem::path p = findSearchPath(filename);
+		std::string p = findSearchPath(filename);
 		if (p.empty()) return nullptr;
-		std::string resourceName = std::move(p.filename().string());
+		std::filesystem::path path = p;
+		std::string resourceName = std::move(path.filename().string());
 		if (images_.count(resourceName)) {
 			SDL_DestroyTexture(images_[resourceName]);
 		}
-		SDL_Surface* img = IMG_Load(resourceName.c_str());
-		if (!img) return nullptr;
+		SDL_Surface* img = IMG_Load(p.c_str());
+		if (!img) {
+			HFLOGERROR("'%s' not found", resourceName.c_str());
+			return nullptr;
+		}
 		SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer_, img);
 		images_[resourceName] = tex;
 		SDL_FreeSurface(img);
