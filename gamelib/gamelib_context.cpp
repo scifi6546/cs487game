@@ -94,8 +94,8 @@ namespace GameLib {
             result = false;
         }
 
-		constexpr int frequency = 48000;
-		constexpr int channels = 2;
+        constexpr int frequency = 48000;
+        constexpr int channels = 2;
         if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, 4096) != 0) {
             HFLOGERROR("Failed to open audio: %s", SDL_GetError());
         } else {
@@ -114,6 +114,7 @@ namespace GameLib {
         freeImages();
         freeTilesets();
         freeAudioClips();
+        freeMusicClips();
         Mix_CloseAudio();
         SDL_Quit();
     }
@@ -357,10 +358,13 @@ namespace GameLib {
 
     int Context::_addTile(int tilesetId, SDL_Surface* surface) {
         auto& tileset = tilesets_[tilesetId];
-        TILEIMAGE t;
-        t.texture = SDL_CreateTextureFromSurface(renderer_, surface);
-        if (!t.texture)
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer_, surface);
+        if (!texture)
             return 0;
+
+        TILEIMAGE t;
+        t.texture = texture;
         t.tileId = (int)tileset.size();
         t.tilesetId = tilesetId;
         t.w = surface->w;
@@ -464,4 +468,53 @@ namespace GameLib {
             return -1;
         return Mix_PlayChannel(-1, audio->chunk, 0);
     }
+
+    MUSICINFO* Context::initMusicClip(int musicId) {
+        if (musicClips_[musicId]) {
+            musicClips_[musicId].free();
+            musicClips_[musicId] = MUSICINFO();
+        }
+        return &musicClips_[musicId];
+    }
+
+    MUSICINFO* Context::loadMusicClip(int musicId, const std::string& filename) {
+        std::string p = findSearchPath(filename);
+        if (p.empty())
+            return nullptr;
+        MUSICINFO& music = *initMusicClip(musicId);
+
+        Mix_Music* chunk = Mix_LoadMUS(p.c_str());
+        if (!chunk) {
+            HFLOGWARN("Unable to load '%s'", filename.c_str());
+            HFLOGWARN("Mix_LoadWAV returned '%s'", Mix_GetError());
+            return nullptr;
+        }
+        filesystem::path path = p;
+        music.chunk = chunk;
+        music.name = path.filename().string();
+        HFLOGINFO("loaded '%s'", filename.c_str());
+        return &music;
+    }
+
+    MUSICINFO* Context::getMusicClip(int musicId) {
+        if (!musicClips_.count(musicId)) {
+            return nullptr;
+        }
+        return &musicClips_[musicId];
+    }
+
+    void Context::freeMusicClips() {
+        for (auto& [k, v] : musicClips_) {
+            v.free();
+        }
+        musicClips_.clear();
+    }
+
+    bool Context::playMusicClip(int musicId, int loops, int fadems) {
+        MUSICINFO* music = getMusicClip(musicId);
+        if (!music)
+            return false;
+        return Mix_FadeInMusic(music->chunk, loops, fadems) == 0;
+    }
+
 }

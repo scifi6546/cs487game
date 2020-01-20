@@ -87,18 +87,29 @@ namespace GameLib {
         // AUDIO CODE ////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////
 
-		// initializes a clip id for use, it frees any audio clip used, nullptr if it doesn't exist
+        // initializes a clip id for use, it frees any audio clip used, nullptr if it doesn't exist
         AUDIOINFO* initAudioClip(int clipId);
-		// returns a pointer to the AUDIOINFO struct used for playing this clip, nullptr if it doesn't exist
-        AUDIOINFO* getAudioClip(int clipId);
-		// returns a pointer to the AUDIOINFO struct with the loaded WAV data, nullptr if it doesn't exist
+        // returns a pointer to the AUDIOINFO struct with the loaded WAV data, nullptr if it doesn't exist
         AUDIOINFO* loadAudioClip(int clipId, const std::string& filename);
-		// frees all audio clips
+        // returns a pointer to the AUDIOINFO struct used for playing this clip, nullptr if it doesn't exist
+        AUDIOINFO* getAudioClip(int clipId);
+        // frees all audio clips
         void freeAudioClips();
-		// returns the number of audio clips currently allocated
+        // returns the number of audio clips currently allocated
         int getAudioClipCount() const { return (int)audioClips_.size(); }
-		// play an audio clip on a channel (-1 if any free channel)
+        // play an audio clip on a channel (-1 if any free channel)
         int playAudioClip(int clipId, int channel = -1);
+
+        //////////////////////////////////////////////////////////////
+        // MUSIC CODE ////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+
+        MUSICINFO* initMusicClip(int musicId);
+        MUSICINFO* loadMusicClip(int musicId, const std::string& filename);
+        MUSICINFO* getMusicClip(int musicId);
+        void freeMusicClips();
+        int getMusicClipCount() const { return (int)musicClips_.size(); }
+        bool playMusicClip(int musicId, int loops = 0, int fadems = 0);
 
         //////////////////////////////////////////////////////////////
         // EVENT HANDLING CODE ///////////////////////////////////////
@@ -142,6 +153,7 @@ namespace GameLib {
         std::map<std::string, TILEIMAGE> images_;
         std::map<int, std::vector<TILEIMAGE>> tilesets_;
         std::map<int, AUDIOINFO> audioClips_;
+        std::map<int, MUSICINFO> musicClips_;
 
         bool _init();
         bool _initSubsystems();

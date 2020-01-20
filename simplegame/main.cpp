@@ -23,6 +23,8 @@ int main(int argc, char** argv) {
     context.loadAudioClip(3, "starbattle-exo.wav");
     context.loadAudioClip(4, "starbattle-ok.wav");
     context.loadAudioClip(5, "starbattle-pdead.wav");
+    context.loadMusicClip(0, "starbattlemusic1.mp3");
+    context.loadMusicClip(1, "starbattlemusic2.mp3");
 
     Hf::StopWatch stopwatch;
     double spritesDrawn = 0;
@@ -40,6 +42,14 @@ int main(int argc, char** argv) {
             context.keyboard.scancodes[SDL_SCANCODE_1] = 0;
             context.playAudioClip(1);
         }
+        if (context.keyboard.scancodes[SDL_SCANCODE_2]) {
+            context.keyboard.scancodes[SDL_SCANCODE_2] = 0;
+            context.playMusicClip(0, -1, 1000);
+        }
+        if (context.keyboard.scancodes[SDL_SCANCODE_3]) {
+            context.keyboard.scancodes[SDL_SCANCODE_3] = 0;
+            context.playMusicClip(1, -1, 5000);
+        }
         context.clearScreen({ 255, 0, 255, 255 });
 
         // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
@@ -51,7 +61,7 @@ int main(int argc, char** argv) {
             s.position = { rand() % 1280, rand() % 720 };
             s.center = { 0.0f, 0.0f };
             s.flipFlags = 0;
-            s.angle = rand() % 360;
+            s.angle = (float)(rand() % 360);
             // context.drawTexture(0, rand() % spriteCount, s);
             s.position = { rand() % 1280, rand() % 720 };
             context.drawTexture(s.position, 0, rand() % spriteCount);
@@ -62,6 +72,7 @@ int main(int argc, char** argv) {
         context.drawTexture({ 250, 250 }, { 100, 100 }, testJPG);
         context.swapBuffers();
         frames++;
+        std::this_thread::yield();
     }
     double totalTime = stopwatch.Stop_s();
     HFLOGDEBUG("Sprites/sec = %5.1f", spritesDrawn / totalTime);
