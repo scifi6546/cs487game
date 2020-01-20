@@ -87,12 +87,18 @@ namespace GameLib {
         // AUDIO CODE ////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////
 
+		// initializes a clip id for use, it frees any audio clip used, nullptr if it doesn't exist
         AUDIOINFO* initAudioClip(int clipId);
+		// returns a pointer to the AUDIOINFO struct used for playing this clip, nullptr if it doesn't exist
         AUDIOINFO* getAudioClip(int clipId);
-        void freeAudioClips();
-        int getAudioClipCount() const { return (int)audioClips_.size(); }
+		// returns a pointer to the AUDIOINFO struct with the loaded WAV data, nullptr if it doesn't exist
         AUDIOINFO* loadAudioClip(int clipId, const std::string& filename);
-        void playAudioClip(int clipId);
+		// frees all audio clips
+        void freeAudioClips();
+		// returns the number of audio clips currently allocated
+        int getAudioClipCount() const { return (int)audioClips_.size(); }
+		// play an audio clip on a channel (-1 if any free channel)
+        int playAudioClip(int clipId, int channel = -1);
 
         //////////////////////////////////////////////////////////////
         // EVENT HANDLING CODE ///////////////////////////////////////
@@ -131,7 +137,7 @@ namespace GameLib {
         SDL_Window* window_{ nullptr };
         SDL_Renderer* renderer_{ nullptr };
         SDL_AudioSpec audioSpec_;
-        SDL_AudioDeviceID audioDeviceId_{ 0 }; 
+        SDL_AudioDeviceID audioDeviceId_{ 0 };
         std::vector<std::string> searchPaths_;
         std::map<std::string, TILEIMAGE> images_;
         std::map<int, std::vector<TILEIMAGE>> tilesets_;

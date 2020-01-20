@@ -458,12 +458,10 @@ namespace GameLib {
         return &audio;
     }
 
-    void Context::playAudioClip(int clipId) {
-        if (!audioDeviceId_)
-            return;
+    int Context::playAudioClip(int clipId, int channel) {
         AUDIOINFO* audio = getAudioClip(clipId);
         if (!audio)
-            return;
-        Mix_PlayChannel(-1, audio->chunk, 0);
+            return -1;
+        return Mix_PlayChannel(-1, audio->chunk, 0);
     }
 }
