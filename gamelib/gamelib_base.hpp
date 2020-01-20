@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
+#include <thread>
 
 struct SPRITEINFO {
     glm::vec2 position;
@@ -33,14 +34,6 @@ struct TILEIMAGE {
     int tilesetId{ 0 };
     int w{ 0 };
     int h{ 0 };
-
-    //~TILEIMAGE() {
-    //    if (texture) {
-    //        HFLOGERROR("Should not delete texture in destructor");
-    //        SDL_DestroyTexture(texture);
-    //        texture = nullptr;
-    //    }
-    //}
 };
 
 struct AUDIOINFO {
@@ -60,5 +53,24 @@ struct AUDIOINFO {
         }
     }
 };
+
+struct MUSICINFO {
+    Mix_Music* chunk{ nullptr };
+    std::string name;
+
+    operator bool() const { return chunk != nullptr; }
+
+    void free() {
+        Mix_FreeMusic(chunk);
+        chunk = nullptr;
+    }
+
+    ~MUSICINFO() {
+        if (chunk) {
+            HFLOGERROR("Should not delete sound in destructor");
+        }
+    }
+};
+
 
 #endif
