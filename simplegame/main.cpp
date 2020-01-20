@@ -16,6 +16,14 @@ int main(int argc, char** argv) {
     if (!spriteCount) {
         HFLOGWARN("Tileset not found");
     }
+
+	context.loadAudioClip(0, "starbattle-bad.wav");
+    context.loadAudioClip(1, "starbattle-dead.wav");
+    context.loadAudioClip(2, "starbattle-endo.wav");
+    context.loadAudioClip(3, "starbattle-exo.wav");
+    context.loadAudioClip(4, "starbattle-ok.wav");
+    context.loadAudioClip(5, "starbattle-pdead.wav");
+
     Hf::StopWatch stopwatch;
     double spritesDrawn = 0;
     double frames = 0;
@@ -24,7 +32,10 @@ int main(int argc, char** argv) {
         if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
             context.quitRequested = true;
         }
-
+        if (context.keyboard.scancodes[SDL_SCANCODE_0]) {
+            context.keyboard.scancodes[SDL_SCANCODE_0] = 0;
+            context.playAudioClip(0);
+        }
         context.clearScreen({ 255, 0, 255, 255 });
 
         // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
