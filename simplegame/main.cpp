@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
         // An arbitrary number roughly representing HD at 4 layers, 32x32 sprites
         constexpr int SpritesToDraw = 60 * 34 * 4;
         for (int i = 0; i < SpritesToDraw; i++) {
-            SPRITEINFO s;
+            GameLib::SPRITEINFO s;
             s.position = { rand() % 1280, rand() % 720 };
             s.center = { 0.0f, 0.0f };
             s.flipFlags = 0;

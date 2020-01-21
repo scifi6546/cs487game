@@ -4,7 +4,7 @@
 #include <gamelib_base.hpp>
 #include <gamelib_context.hpp>
 
-namespace Gamelib {
+namespace GameLib {
 }
 
 #endif
