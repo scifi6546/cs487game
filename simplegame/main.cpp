@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
         HFLOGWARN("Tileset not found");
     }
 
-	context.loadAudioClip(0, "starbattle-bad.wav");
+    context.loadAudioClip(0, "starbattle-bad.wav");
     context.loadAudioClip(1, "starbattle-dead.wav");
     context.loadAudioClip(2, "starbattle-endo.wav");
     context.loadAudioClip(3, "starbattle-exo.wav");
@@ -25,6 +25,13 @@ int main(int argc, char** argv) {
     context.loadAudioClip(5, "starbattle-pdead.wav");
     context.loadMusicClip(0, "starbattlemusic1.mp3");
     context.loadMusicClip(1, "starbattlemusic2.mp3");
+    context.loadMusicClip(2, "distoro2.mid");
+
+    GameLib::World world;
+    std::string worldPath = context.findSearchPath("world.txt");
+    if (!world.load(worldPath)) {
+        HFLOGWARN("world.txt not found");
+    }
 
     Hf::StopWatch stopwatch;
     double spritesDrawn = 0;
