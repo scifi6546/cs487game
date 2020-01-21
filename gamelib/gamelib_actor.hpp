@@ -9,6 +9,13 @@ namespace GameLib {
         Actor();
         virtual ~Actor();
 
+        using weak_ptr = std::weak_ptr<Actor>;
+        using shared_ptr = std::shared_ptr<Actor>;
+        using const_weak_ptr = const std::weak_ptr<Actor>;
+        using const_shared_ptr = const std::shared_ptr<Actor>;
+
+        virtual char charDesc() const { return charDesc_; }
+
         // Called whenever the object is introduced into the game
         virtual void beginPlay();
 
@@ -16,10 +23,10 @@ namespace GameLib {
         virtual void tick(float deltaTime);
 
         // Called when an object has just started to overlap the bounding box of this object
-        virtual void startOverlap(Object::const_weak_ptr otherObject);
+        virtual void startOverlap(const_weak_ptr otherObject);
 
         // Called when an object has just ended overlapping the bounding box of this object
-        virtual void endOverlap(Object::const_weak_ptr otherObject);
+        virtual void endOverlap(const_weak_ptr otherObject);
 
         // Gets the world matrix for this actor which is transform * addlTransform
         glm::mat4 worldMatrix() const { return transform * addlTransform; }
@@ -63,6 +70,7 @@ namespace GameLib {
     protected:
         std::string _updateDesc() override { return { "Actor" }; }
         std::string _updateInfo() override { return { "Actor" }; }
+        char charDesc_ = '?';
     };
 }
 
