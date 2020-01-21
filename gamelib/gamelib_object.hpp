@@ -38,6 +38,11 @@ namespace GameLib {
         // Reads a serialized text version of this object. This will be one line of information.
         virtual std::istream& readCharStream(std::istream& is) { return is; }
 
+        // Read line by line the contents of the file, calling readCharStream with an istringstream
+        bool load(const std::string& filename);
+
+        // Write line by line the contents of the file, calling writeCharStream with an ofstream
+        bool write(const std::string& filename);
     protected:
         // sets the name of the object
         void _setName(std::string&& namestr) { name_ = std::move(namestr); }

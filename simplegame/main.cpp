@@ -57,12 +57,26 @@ int main(int argc, char** argv) {
             context.keyboard.scancodes[SDL_SCANCODE_3] = 0;
             context.playMusicClip(1, -1, 5000);
         }
+        if (context.keyboard.scancodes[SDL_SCANCODE_4]) {
+            context.keyboard.scancodes[SDL_SCANCODE_4] = 0;
+            context.playMusicClip(2, -1, 1000);
+        }
         context.clearScreen({ 255, 0, 255, 255 });
 
+		for (int x = 0; x < world.worldSizeX; x++) {
+            for (int y = 0; y < world.worldSizeY; y++) {
+                GameLib::SPRITEINFO s;
+                s.position = { x * 32, y * 32 };
+                auto t = world.getTile(x, y);				
+                context.drawTexture(s.position, 0, t.charDesc);
+			}
+        }
+
         // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
-        //constexpr int SpritesToDraw = 128 * 72 * 8;
+        // constexpr int SpritesToDraw = 128 * 72 * 8;
         // An arbitrary number roughly representing HD at 4 layers, 32x32 sprites
-        constexpr int SpritesToDraw = 60 * 34 * 4;
+        constexpr int SpritesToDraw = 5;
+        //60 * 34 * 4;
         for (int i = 0; i < SpritesToDraw; i++) {
             GameLib::SPRITEINFO s;
             s.position = { rand() % 1280, rand() % 720 };
