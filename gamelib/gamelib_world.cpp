@@ -8,7 +8,7 @@ namespace GameLib {
     ENUM(WORLD)                                                                                                                                                \
     ENUM(DEFINE)
 #define ENUM_VAL(x) x,
-#define ENUM_MAP(x) { #x, Tiles::##x },
+#define ENUM_MAP(x) { #x, Tiles::x },
 
         enum class Tiles { WORLD_TOKENS(ENUM_VAL) };
         std::map<std::string, Tiles> worldTokens{ WORLD_TOKENS(ENUM_MAP) };
