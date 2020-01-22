@@ -45,6 +45,9 @@
     <ClInclude Include="gamelib_world.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gamelib_command.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gamelib.cpp">
@@ -71,5 +74,11 @@
     <ClCompile Include="gamelib_world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gamelib_command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>

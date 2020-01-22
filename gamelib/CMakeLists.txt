@@ -8,6 +8,7 @@ add_library(gamelib STATIC
     gamelib_object.cpp
     gamelib_actor.cpp
     gamelib_world.cpp
+	gamelib_command.cpp
     hatchetfish_log.cpp
     hatchetfish_stopwatch.cpp
     )
