@@ -143,6 +143,7 @@ namespace GameLib {
 
     private:
         bool initialized_{ false };
+        bool audioInitialized_{ false };
         mutable bool hadError_{ false };
         std::string errorString_;
         SDL_Window* window_{ nullptr };
