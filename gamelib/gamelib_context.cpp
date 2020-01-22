@@ -101,6 +101,7 @@ namespace GameLib {
         } else {
             HFLOGINFO("Audio Device:      %s", SDL_GetAudioDeviceName(0, 0));
             HFLOGINFO("Audio initialized: %dHz %d channels", frequency, channels);
+            //audioInitialized_ = true;
         }
         return result;
     }
@@ -116,7 +117,9 @@ namespace GameLib {
         freeAudioClips();
         freeMusicClips();
         Mix_CloseAudio();
+        audioInitialized_ = false;
         SDL_Quit();
+        initialized_ = false;
     }
 
     //////////////////////////////////////////////////////////////////
@@ -444,6 +447,8 @@ namespace GameLib {
     }
 
     AUDIOINFO* Context::loadAudioClip(int clipId, const std::string& filename) {
+        if (!audioInitialized_)
+            return nullptr;
         std::string p = findSearchPath(filename);
         if (p.empty())
             return nullptr;
@@ -463,6 +468,8 @@ namespace GameLib {
     }
 
     int Context::playAudioClip(int clipId, int channel) {
+        if (!audioInitialized_)
+            return -1;
         AUDIOINFO* audio = getAudioClip(clipId);
         if (!audio)
             return -1;
@@ -478,6 +485,8 @@ namespace GameLib {
     }
 
     MUSICINFO* Context::loadMusicClip(int musicId, const std::string& filename) {
+        if (!audioInitialized_)
+            return nullptr;
         std::string p = findSearchPath(filename);
         if (p.empty())
             return nullptr;
@@ -511,6 +520,8 @@ namespace GameLib {
     }
 
     bool Context::playMusicClip(int musicId, int loops, int fadems) {
+        if (!audioInitialized_)
+            return false;
         MUSICINFO* music = getMusicClip(musicId);
         if (!music)
             return false;
