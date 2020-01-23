@@ -99,6 +99,12 @@ namespace GameLib {
         int getAudioClipCount() const { return (int)audioClips_.size(); }
         // play an audio clip on a channel (-1 if any free channel)
         int playAudioClip(int clipId, int channel = -1);
+		// stop an audio channel from playing
+        void stopAudioChannel(int channel);
+		// set the volume for a specific channel in the range 0 to 1
+        void setChannelVolume(int channel, float volume);
+		// get the volume for a specific channel in the range 0 to 1
+        float getChannelVolume(int channel);
 
         //////////////////////////////////////////////////////////////
         // MUSIC CODE ////////////////////////////////////////////////

@@ -101,7 +101,7 @@ namespace GameLib {
         } else {
             HFLOGINFO("Audio Device:      %s", SDL_GetAudioDeviceName(0, 0));
             HFLOGINFO("Audio initialized: %dHz %d channels", frequency, channels);
-            //audioInitialized_ = true;
+            audioInitialized_ = true;
         }
         return result;
     }
@@ -475,6 +475,15 @@ namespace GameLib {
             return -1;
         return Mix_PlayChannel(-1, audio->chunk, 0);
     }
+
+    void Context::stopAudioChannel(int channel) { Mix_HaltChannel(channel); }
+
+    void Context::setChannelVolume(int channel, float volume) {
+        int v = (int)clamp(volume * 128.0f + 0.5f, 0.0f, 128.0f);
+        Mix_Volume(channel, v);
+    }
+
+    float Context::getChannelVolume(int channel) { return clamp(Mix_Volume(channel, -1) / 128.0f, 0.0f, 1.0f); }
 
     MUSICINFO* Context::initMusicClip(int musicId) {
         if (musicClips_[musicId]) {

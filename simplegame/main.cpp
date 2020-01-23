@@ -7,6 +7,9 @@
 
 int main(int argc, char** argv) {
     GameLib::Context context(1280, 720, GameLib::WindowDefault);
+    GameLib::Audio audio;
+    GameLib::Locator::provide(&context);
+    GameLib::Locator::provide(&audio);
 
     context.addSearchPath("./assets");
     context.addSearchPath("../assets");
@@ -41,24 +44,24 @@ int main(int argc, char** argv) {
         if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
             context.quitRequested = true;
         }
-        if (context.keyboard.scancodes[SDL_SCANCODE_0]) {
-            context.keyboard.scancodes[SDL_SCANCODE_0] = 0;
-            context.playAudioClip(0);
-        }
         if (context.keyboard.scancodes[SDL_SCANCODE_1]) {
             context.keyboard.scancodes[SDL_SCANCODE_1] = 0;
-            context.playAudioClip(1);
+            audio.playAudio(0, false);
         }
         if (context.keyboard.scancodes[SDL_SCANCODE_2]) {
             context.keyboard.scancodes[SDL_SCANCODE_2] = 0;
-            context.playMusicClip(0, -1, 1000);
+            audio.playAudio(1, true);
         }
         if (context.keyboard.scancodes[SDL_SCANCODE_3]) {
             context.keyboard.scancodes[SDL_SCANCODE_3] = 0;
-            context.playMusicClip(1, -1, 5000);
+            context.playMusicClip(0, -1, 1000);
         }
         if (context.keyboard.scancodes[SDL_SCANCODE_4]) {
             context.keyboard.scancodes[SDL_SCANCODE_4] = 0;
+            context.playMusicClip(1, -1, 5000);
+        }
+        if (context.keyboard.scancodes[SDL_SCANCODE_5]) {
+            context.keyboard.scancodes[SDL_SCANCODE_5] = 0;
             context.playMusicClip(2, -1, 1000);
         }
         context.clearScreen({ 255, 0, 255, 255 });

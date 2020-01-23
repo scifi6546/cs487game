@@ -21,6 +21,7 @@
 #include <cmath>
 #include <memory>
 #include <thread>
+#include <stdexcept>
 
 namespace GameLib {
     struct SPRITEINFO {
@@ -73,6 +74,11 @@ namespace GameLib {
             }
         }
     };
+
+	template <typename T>
+	T clamp(T x, T a, T b) {
+        return (x < a) ? a : (x > b) ? b : x;
+	}
 }
 
 #endif

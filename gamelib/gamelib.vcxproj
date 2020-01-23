@@ -158,11 +158,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="gamelib.hpp" />
+    <ClInclude Include="gamelib_action.hpp" />
     <ClInclude Include="gamelib_actor.hpp" />
+    <ClInclude Include="gamelib_audio.hpp" />
     <ClInclude Include="gamelib_base.hpp" />
     <ClInclude Include="gamelib_command.hpp" />
     <ClInclude Include="gamelib_context.hpp" />
     <ClInclude Include="gamelib_object.hpp" />
+    <ClInclude Include="gamelib_locator.hpp" />
     <ClInclude Include="gamelib_world.hpp" />
     <ClInclude Include="hatchetfish.hpp" />
     <ClInclude Include="hatchetfish_log.hpp" />
@@ -170,10 +173,13 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="gamelib_action.cpp" />
     <ClCompile Include="gamelib_actor.cpp" />
+    <ClCompile Include="gamelib_audio.cpp" />
     <ClCompile Include="gamelib_command.cpp" />
     <ClCompile Include="gamelib_context.cpp" />
     <ClCompile Include="gamelib.cpp" />
+    <ClCompile Include="gamelib_locator.cpp" />
     <ClCompile Include="gamelib_object.cpp" />
     <ClCompile Include="gamelib_world.cpp" />
     <ClCompile Include="hatchetfish_log.cpp" />
