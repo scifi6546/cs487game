@@ -537,4 +537,5 @@ namespace GameLib {
         return Mix_FadeInMusic(music->chunk, loops, fadems) == 0;
     }
 
+    void Context::stopMusicClip() { Mix_HaltMusic(); }
 }

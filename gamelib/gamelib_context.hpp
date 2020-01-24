@@ -116,6 +116,7 @@ namespace GameLib {
         void freeMusicClips();
         int getMusicClipCount() const { return (int)musicClips_.size(); }
         bool playMusicClip(int musicId, int loops = 0, int fadems = 0);
+        void stopMusicClip();
 
         //////////////////////////////////////////////////////////////
         // EVENT HANDLING CODE ///////////////////////////////////////
