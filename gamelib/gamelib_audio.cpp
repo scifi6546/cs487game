@@ -4,8 +4,9 @@
 
 namespace GameLib {
     void Audio::playAudio(int audioClipId, bool stopPrevious) {
-        if (stopPrevious) stopAudio(audioClipId);
-		Context* context = Locator::getContext();
+        if (stopPrevious)
+            stopAudio(audioClipId);
+        Context* context = Locator::getContext();
         lastChannel_ = context->playAudioClip(audioClipId);
         audioClipToChannelMap_[audioClipId] = lastChannel_;
     };
@@ -24,5 +25,15 @@ namespace GameLib {
     float Audio::getVolume() const {
         Context* context = Locator::getContext();
         return context->getChannelVolume(lastChannel_);
+    }
+
+    void Audio::playMusic(int musicClipId, int loops, float fadems) {
+        Context* context = Locator::getContext();
+        context->playMusicClip(musicClipId, loops, fadems);
+    }
+
+    void Audio::stopMusic() {
+        Context* context = Locator::getContext();
+        context->stopMusicClip();
     }
 }
