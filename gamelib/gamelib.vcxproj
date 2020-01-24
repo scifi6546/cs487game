@@ -164,6 +164,7 @@
     <ClInclude Include="gamelib_base.hpp" />
     <ClInclude Include="gamelib_command.hpp" />
     <ClInclude Include="gamelib_context.hpp" />
+    <ClInclude Include="gamelib_input_handler.hpp" />
     <ClInclude Include="gamelib_object.hpp" />
     <ClInclude Include="gamelib_locator.hpp" />
     <ClInclude Include="gamelib_world.hpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="gamelib_command.cpp" />
     <ClCompile Include="gamelib_context.cpp" />
     <ClCompile Include="gamelib.cpp" />
+    <ClCompile Include="gamelib_input_handler.cpp" />
     <ClCompile Include="gamelib_locator.cpp" />
     <ClCompile Include="gamelib_object.cpp" />
     <ClCompile Include="gamelib_world.cpp" />

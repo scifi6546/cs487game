@@ -7,6 +7,7 @@
 #include <gamelib_actor.hpp>
 #include <gamelib_world.hpp>
 #include <gamelib_locator.hpp>
+#include <gamelib_command.hpp>
 
 namespace GameLib {
 }
