@@ -17,6 +17,8 @@ add_library(gamelib STATIC
     hatchetfish_stopwatch.cpp
     )
 
+target_precompile_headers(gamelib PRIVATE pch.h)
+
 install(TARGETS gamelib DESTINATION lib)
 #[[install(TARGETS
     ./gamelib.hpp
