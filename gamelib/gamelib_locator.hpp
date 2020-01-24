@@ -4,6 +4,7 @@
 #include <gamelib_base.hpp>
 #include <gamelib_context.hpp>
 #include <gamelib_audio.hpp>
+#include <gamelib_input_handler.hpp>
 
 namespace GameLib {
     class Locator {
@@ -15,18 +16,23 @@ namespace GameLib {
         }
         static void provide(Context* context) { context_ = context; }
 
-
         static IAudio* getAudio() {
             if (audioService_)
                 return audioService_;
             return &nullAudioService_;
         }
         static void provide(IAudio* audio) { audioService_ = audio; }
+
+        static void provide(InputHandler* input) { inputHandler_ = input; }
+        static InputHandler* getInput() { return inputHandler_; }
+
     private:
         static Context* context_;
 
         static IAudio* audioService_;
         static IAudio nullAudioService_;
+
+        static InputHandler* inputHandler_;
     };
 }
 
