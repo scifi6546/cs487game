@@ -29,7 +29,7 @@ namespace GameLib {
 
     void Audio::playMusic(int musicClipId, int loops, float fadems) {
         Context* context = Locator::getContext();
-        context->playMusicClip(musicClipId, loops, fadems);
+        context->playMusicClip(musicClipId, loops, (int)fadems);
     }
 
     void Audio::stopMusic() {

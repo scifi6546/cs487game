@@ -22,6 +22,7 @@ namespace GameLib {
         operator bool() const { return initialized_; }
         bool hadError() const;
         const std::string errorString() const { return errorString_; }
+        bool audioInitialized() const { return audioInitialized_; }
 
         //////////////////////////////////////////////////////////////
         // SEARCH PATHS //////////////////////////////////////////////

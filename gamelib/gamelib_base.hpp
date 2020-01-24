@@ -8,6 +8,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <czmq.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <hatchetfish.hpp>
 
 #include <iostream>

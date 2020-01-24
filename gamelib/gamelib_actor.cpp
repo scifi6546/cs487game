@@ -2,7 +2,9 @@
 #include "gamelib_actor.hpp"
 
 namespace GameLib {
-    Actor::Actor() {}
+    Actor::Actor()
+        : transform(1.0f)
+        , addlTransform(1.0f) {}
 
     Actor::~Actor() {}
 

@@ -9,9 +9,9 @@
     if (context->keyboard.scancodes[SDL_SCANCODE_##x]) {                                                                                                       \
         command;                                                                                                                                               \
     }
-#define HANDLESCANCODE(x, command)                                                                                                                             \
-    if (context->keyboard.scancodes[SDL_SCANCODE_##x]) {                                                                                                       \
-        bool result = command;                                                                                                                                 \
+#define HANDLESCANCODE(x, command, value)                                                                                                                      \
+    if (command && context->keyboard.scancodes[SDL_SCANCODE_##x]) {                                                                                            \
+        bool result = command->execute(value);                                                                                                                 \
         if (result)                                                                                                                                            \
             context->keyboard.scancodes[SDL_SCANCODE_##x] = 0;                                                                                                 \
     }
@@ -21,31 +21,31 @@ namespace GameLib {
         Context* context = Locator::getContext();
         _checkPointers();
         const float ONE = 1.0f;
-        HANDLESCANCODE(W, dpadPosY->execute(ONE));
-        HANDLESCANCODE(S, dpadNegY->execute(ONE));
-        HANDLESCANCODE(A, dpadNegX->execute(ONE));
-        HANDLESCANCODE(D, dpadPosX->execute(ONE));
-        HANDLESCANCODE(ESCAPE, back->execute(ONE));
-        HANDLESCANCODE(RETURN, start->execute(ONE));
-        HANDLESCANCODE(SPACE, buttonA->execute(ONE));
+        HANDLESCANCODE(W, dpadPosY, ONE);
+        HANDLESCANCODE(S, dpadNegY, ONE);
+        HANDLESCANCODE(A, dpadNegX, ONE);
+        HANDLESCANCODE(D, dpadPosX, ONE);
+        HANDLESCANCODE(ESCAPE, back, ONE);
+        HANDLESCANCODE(RETURN, start, ONE);
+        HANDLESCANCODE(SPACE, buttonA, ONE);
         glm::vec3 axis1{ 0.0f, 0.0f, 0.0f };
-        HANDLESCANCODE(LEFT, axis1.x -= 1);
-        HANDLESCANCODE(RIGHT, axis1.x += 1);
-        HANDLESCANCODE(UP, axis1.y -= 1);
-        HANDLESCANCODE(DOWN, axis1.y += 1);
+        CHECKSCANCODE(LEFT, axis1.x -= 1);
+        CHECKSCANCODE(RIGHT, axis1.x += 1);
+        CHECKSCANCODE(UP, axis1.y -= 1);
+        CHECKSCANCODE(DOWN, axis1.y += 1);
         axis1X->execute(axis1.x);
         axis1Y->execute(axis1.y);
 
-		HANDLESCANCODE(1, key1->execute(ONE));
-        HANDLESCANCODE(2, key2->execute(ONE));
-        HANDLESCANCODE(3, key3->execute(ONE));
-        HANDLESCANCODE(4, key4->execute(ONE));
-        HANDLESCANCODE(5, key5->execute(ONE));
-        HANDLESCANCODE(6, key6->execute(ONE));
-        HANDLESCANCODE(7, key7->execute(ONE));
-        HANDLESCANCODE(8, key8->execute(ONE));
-        HANDLESCANCODE(9, key9->execute(ONE));
-        HANDLESCANCODE(0, key0->execute(ONE));
+        HANDLESCANCODE(1, key1, ONE);
+        HANDLESCANCODE(2, key2, ONE);
+        HANDLESCANCODE(3, key3, ONE);
+        HANDLESCANCODE(4, key4, ONE);
+        HANDLESCANCODE(5, key5, ONE);
+        HANDLESCANCODE(6, key6, ONE);
+        HANDLESCANCODE(7, key7, ONE);
+        HANDLESCANCODE(8, key8, ONE);
+        HANDLESCANCODE(9, key9, ONE);
+        HANDLESCANCODE(0, key0, ONE);
     }
 
     void InputHandler::_checkPointers() {
@@ -70,5 +70,15 @@ namespace GameLib {
         CHECKPOINTER(start);
         CHECKPOINTER(back);
         CHECKPOINTER(home);
+        CHECKPOINTER(key1);
+        CHECKPOINTER(key2);
+        CHECKPOINTER(key3);
+        CHECKPOINTER(key4);
+        CHECKPOINTER(key1);
+        CHECKPOINTER(key6);
+        CHECKPOINTER(key7);
+        CHECKPOINTER(key8);
+        CHECKPOINTER(key9);
+        CHECKPOINTER(key0);
     }
 }

@@ -89,9 +89,6 @@
     <ClCompile Include="gamelib_command.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gamelib_action.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="gamelib_audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gamelib_input_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gamelib_action.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
