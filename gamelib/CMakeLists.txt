@@ -4,11 +4,15 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_library(gamelib STATIC
     gamelib.cpp
-    gamelib_context.cpp
-    gamelib_object.cpp
-    gamelib_actor.cpp
-    gamelib_world.cpp
+	gamelib_action.cpp
+	gamelib_actor.cpp
+	gamelib_audio.cpp
 	gamelib_command.cpp
+    gamelib_context.cpp
+	gamelib_input_handler.cpp
+	gamelib_locator.cpp
+    gamelib_object.cpp
+    gamelib_world.cpp
     hatchetfish_log.cpp
     hatchetfish_stopwatch.cpp
     )
