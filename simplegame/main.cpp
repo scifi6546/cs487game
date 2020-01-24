@@ -2,6 +2,7 @@
 // by Dr. Jonathan Metzgar et al
 // UAF CS Game Design and Architecture Course
 #include <gamelib.hpp>
+#include <gamelib_action.hpp>
 
 #pragma comment(lib, "gamelib.lib")
 
@@ -49,12 +50,23 @@ public:
     }
 };
 
+class MovementCommand : public GameLib::InputCommand {
+public:
+    const char* type() const override { return "MovementCommand"; }
+    bool execute(float amount) override {
+        axis = amount;
+        return true;
+    }
+    float axis{ 0.0f };
+};
+
 int main(int argc, char** argv) {
     GameLib::Context context(1280, 720, GameLib::WindowDefault);
     GameLib::Audio audio;
     GameLib::InputHandler input;
     GameLib::Locator::provide(&context);
-    GameLib::Locator::provide(&audio);
+    if (context.audioInitialized())
+        GameLib::Locator::provide(&audio);
     GameLib::Locator::provide(&input);
 
     PlaySoundCommand play0(0, false);
@@ -65,6 +77,8 @@ int main(int argc, char** argv) {
     PlayMusicCommand playMusic2(1);
     PlayMusicCommand playMusic3(2);
     QuitCommand quitCommand;
+    MovementCommand xaxisCommand;
+    MovementCommand yaxisCommand;
 
     input.back = &quitCommand;
     input.key1 = &play0;
@@ -74,6 +88,8 @@ int main(int argc, char** argv) {
     input.key5 = &playMusic1;
     input.key6 = &playMusic2;
     input.key7 = &playMusic3;
+    input.axis1X = &xaxisCommand;
+    input.axis1Y = &yaxisCommand;
 
     context.addSearchPath("./assets");
     context.addSearchPath("../assets");
@@ -103,11 +119,21 @@ int main(int argc, char** argv) {
     Hf::StopWatch stopwatch;
     double spritesDrawn = 0;
     double frames = 0;
+    GameLib::Actor player;
+    GameLib::MoveAction moveAction;
+    moveAction.setActor(&player);
+
+    float t0 = stopwatch.Stop_sf();
+
     while (!context.quitRequested) {
+        float t1 = stopwatch.Stop_sf();
+        float dt = t1 - t0;
+        t0 = t1;
+
         context.getEvents();
         input.handle();
 
-        //if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
+        // if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
         //    context.quitRequested = true;
         //}
 
@@ -121,6 +147,15 @@ int main(int argc, char** argv) {
                 context.drawTexture(s.position, 0, t.charDesc);
             }
         }
+
+		// Draw the player here
+		// Later we will change this to a better system
+
+        moveAction.axis1X = xaxisCommand.axis;
+        moveAction.axis1Y = yaxisCommand.axis;
+        moveAction.update(dt);
+        glm::vec3 playerPosition = player.worldPosition() * 32.0f;
+        context.drawTexture({ playerPosition.x, playerPosition.y }, { 100, 100 }, testPNG);
 
         // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
         // constexpr int SpritesToDraw = 128 * 72 * 8;
