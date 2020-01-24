@@ -5,11 +5,75 @@
 
 #pragma comment(lib, "gamelib.lib")
 
+class PlaySoundCommand : public GameLib::InputCommand {
+public:
+    PlaySoundCommand(int audioClipId, bool stopPrevious)
+        : musicClipId_{ audioClipId }
+        , stopPrevious_{ stopPrevious } {}
+
+    const char* type() const override { return "PlaySoundCommand"; }
+
+    bool execute(float amount) override {
+        GameLib::Locator::getAudio()->playAudio(musicClipId_, stopPrevious_);
+        return true;
+    }
+
+private:
+    int musicClipId_{ 0 };
+    bool stopPrevious_{ false };
+};
+
+class PlayMusicCommand : public GameLib::InputCommand {
+public:
+    PlayMusicCommand(int musicClipId)
+        : musicClipId_{ musicClipId } {}
+
+    const char* type() const override { return "PlayMusicCommand"; }
+
+    bool execute(float amount) override {
+        GameLib::Locator::getAudio()->playMusic(musicClipId_, -1, 0);
+        return true;
+    }
+
+private:
+    int musicClipId_{ 0 };
+    bool stopPrevious_{ false };
+};
+
+class QuitCommand : public GameLib::InputCommand {
+public:
+    const char* type() const override { return "QuitCommand"; }
+    bool execute(float amount) override {
+        GameLib::Locator::getContext()->quitRequested = true;
+        return true;
+    }
+};
+
 int main(int argc, char** argv) {
     GameLib::Context context(1280, 720, GameLib::WindowDefault);
     GameLib::Audio audio;
+    GameLib::InputHandler input;
     GameLib::Locator::provide(&context);
     GameLib::Locator::provide(&audio);
+    GameLib::Locator::provide(&input);
+
+    PlaySoundCommand play0(0, false);
+    PlaySoundCommand play1(1, false);
+    PlaySoundCommand play2(2, false);
+    PlaySoundCommand play3(3, false);
+    PlayMusicCommand playMusic1(0);
+    PlayMusicCommand playMusic2(1);
+    PlayMusicCommand playMusic3(2);
+    QuitCommand quitCommand;
+
+    input.back = &quitCommand;
+    input.key1 = &play0;
+    input.key2 = &play1;
+    input.key3 = &play2;
+    input.key4 = &play3;
+    input.key5 = &playMusic1;
+    input.key6 = &playMusic2;
+    input.key7 = &playMusic3;
 
     context.addSearchPath("./assets");
     context.addSearchPath("../assets");
@@ -41,45 +105,28 @@ int main(int argc, char** argv) {
     double frames = 0;
     while (!context.quitRequested) {
         context.getEvents();
-        if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
-            context.quitRequested = true;
-        }
-        if (context.keyboard.scancodes[SDL_SCANCODE_1]) {
-            context.keyboard.scancodes[SDL_SCANCODE_1] = 0;
-            audio.playAudio(0, false);
-        }
-        if (context.keyboard.scancodes[SDL_SCANCODE_2]) {
-            context.keyboard.scancodes[SDL_SCANCODE_2] = 0;
-            audio.playAudio(1, true);
-        }
-        if (context.keyboard.scancodes[SDL_SCANCODE_3]) {
-            context.keyboard.scancodes[SDL_SCANCODE_3] = 0;
-            context.playMusicClip(0, -1, 1000);
-        }
-        if (context.keyboard.scancodes[SDL_SCANCODE_4]) {
-            context.keyboard.scancodes[SDL_SCANCODE_4] = 0;
-            context.playMusicClip(1, -1, 5000);
-        }
-        if (context.keyboard.scancodes[SDL_SCANCODE_5]) {
-            context.keyboard.scancodes[SDL_SCANCODE_5] = 0;
-            context.playMusicClip(2, -1, 1000);
-        }
+        input.handle();
+
+        //if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
+        //    context.quitRequested = true;
+        //}
+
         context.clearScreen({ 255, 0, 255, 255 });
 
-		for (int x = 0; x < world.worldSizeX; x++) {
-            for (int y = 0; y < world.worldSizeY; y++) {
+        for (unsigned x = 0; x < world.worldSizeX; x++) {
+            for (unsigned y = 0; y < world.worldSizeY; y++) {
                 GameLib::SPRITEINFO s;
                 s.position = { x * 32, y * 32 };
-                auto t = world.getTile(x, y);				
+                auto t = world.getTile(x, y);
                 context.drawTexture(s.position, 0, t.charDesc);
-			}
+            }
         }
 
         // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
         // constexpr int SpritesToDraw = 128 * 72 * 8;
         // An arbitrary number roughly representing HD at 4 layers, 32x32 sprites
         constexpr int SpritesToDraw = 5;
-        //60 * 34 * 4;
+        // 60 * 34 * 4;
         for (int i = 0; i < SpritesToDraw; i++) {
             GameLib::SPRITEINFO s;
             s.position = { rand() % 1280, rand() % 720 };

@@ -14,12 +14,23 @@ namespace GameLib {
     };
 
     class NormalCommand : public Command {
+    public:
         virtual ~NormalCommand() {}
 
         const char* type() const override { return "NormalCommand"; }
 
-        virtual void execute(){};
-        virtual void undo(){};
+        virtual void execute() {}
+        virtual void undo() {}
+    };
+
+    class InputCommand : public Command {
+    public:
+        virtual ~InputCommand() {}
+
+        // virtual method to process an input button where amount is in the range -1 to 1
+        // for axes and 0 to 1 for buttons. If method returns true, then event is considered
+        // one time
+        virtual bool execute(float amount) { return true; }
     };
 
     class ActorCommand : public Command {
@@ -28,8 +39,8 @@ namespace GameLib {
 
         const char* type() const override { return "ActorCommand"; }
 
-        virtual void execute(Actor& actor){};
-        virtual void undo(Actor& actor){};
+        virtual void execute(Actor& actor) {}
+        virtual void undo(Actor& actor) {}
     };
 
     template <typename CommandBaseType>
@@ -55,7 +66,7 @@ namespace GameLib {
     using NormalCommandFlyweight = CommandFlyweight<NormalCommand>;
     using ActorCommandFlyweight = CommandFlyweight<ActorCommand>;
 
-	extern NormalCommandFlyweight normalCommands;
+    extern NormalCommandFlyweight normalCommands;
     extern ActorCommandFlyweight actorCommands;
 }
 
