@@ -23,6 +23,11 @@ cmake ..
 cmake --build .
 ./simplegame/simplegame
 ```
+On ubuntu the version of cmake is 2 versions out of date. Inorder to install the latest cmake run
+```
+$ sudo snap install --classic cmake
+```
+
 
 MIDI Playback: You may need to install `timidity++` and `gt` which are the soundfonts and patches needed for SDL2_Mixer.
 
