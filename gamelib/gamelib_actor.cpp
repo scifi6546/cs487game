@@ -10,7 +10,7 @@ namespace GameLib {
 
     void Actor::beginPlay() {}
 
-    void Actor::tick(float deltaTime) {}
+    void Actor::update(float deltaTime) {}
 
     void Actor::startOverlap(const_weak_ptr otherObject) {}
 

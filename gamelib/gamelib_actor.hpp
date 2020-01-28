@@ -20,7 +20,7 @@ namespace GameLib {
         virtual void beginPlay();
 
         // Called each frame the object needs to update itself before drawing
-        virtual void tick(float deltaTime);
+        virtual void update(float deltaTime);
 
         // Called when an object has just started to overlap the bounding box of this object
         virtual void startOverlap(const_weak_ptr otherObject);

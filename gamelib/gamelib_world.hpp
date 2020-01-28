@@ -30,6 +30,8 @@ namespace GameLib {
 
         void resize(unsigned sizeX, unsigned sizeY);
 
+		void update(float deltaTime);
+
         void setTile(unsigned x, unsigned y, Tile ptr);
         Tile getTile(unsigned x, unsigned y);
         Tile getTile(unsigned x, unsigned y) const;

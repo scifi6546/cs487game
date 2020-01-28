@@ -29,6 +29,14 @@ namespace GameLib {
         worldSizeY = sizeY;
     }
 
+	void World::update(float deltaTime) {
+        for (auto& actor : actors) {
+            if (!actor->active)
+                continue;
+            actor->update(deltaTime);
+        }
+	}
+
     void World::setTile(unsigned x, unsigned y, Tile tile) {
         if (x >= worldSizeX || y >= worldSizeY)
             return;
