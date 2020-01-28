@@ -4,6 +4,7 @@
 #include <gamelib_base.hpp>
 #include <gamelib_context.hpp>
 #include <gamelib_audio.hpp>
+#include <gamelib_graphics.hpp>
 #include <gamelib_input_handler.hpp>
 
 namespace GameLib {
@@ -26,11 +27,21 @@ namespace GameLib {
         static void provide(InputHandler* input) { inputHandler_ = input; }
         static InputHandler* getInput() { return inputHandler_; }
 
+		static IGraphics* getGraphics() {
+            if (graphicsService_)
+                return graphicsService_;
+            return &nullGraphicsService_;
+        }
+		static void provide(IGraphics* graphics) { graphicsService_ = graphics; }
+
     private:
         static Context* context_;
 
         static IAudio* audioService_;
         static IAudio nullAudioService_;
+
+		static IGraphics* graphicsService_;
+        static IGraphics nullGraphicsService_;
 
         static InputHandler* inputHandler_;
     };

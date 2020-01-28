@@ -64,10 +64,13 @@ int main(int argc, char** argv) {
     GameLib::Context context(1280, 720, GameLib::WindowDefault);
     GameLib::Audio audio;
     GameLib::InputHandler input;
+    GameLib::Graphics graphics;
+
     GameLib::Locator::provide(&context);
     if (context.audioInitialized())
         GameLib::Locator::provide(&audio);
     GameLib::Locator::provide(&input);
+    GameLib::Locator::provide(&graphics);
 
     PlaySoundCommand play0(0, false);
     PlaySoundCommand play1(1, false);
