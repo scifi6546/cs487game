@@ -42,7 +42,7 @@ namespace GameLib {
 
     void Context::_setError(std::string&& errorString) {
         errorString_ = std::move(errorString);
-        HFLOGWARN("Error detected: %s", errorString.c_str());
+        HFLOGWARN("Error detected: %s", errorString_.c_str());
         hadError_ = true;
     }
 
