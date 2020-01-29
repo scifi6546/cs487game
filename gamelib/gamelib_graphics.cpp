@@ -4,16 +4,16 @@
 
 namespace GameLib {
 
-    Graphics::Graphics() { context = Locator::getContext(); }
+    Graphics::Graphics(Context* ctx) { context = ctx; }
 
     Graphics::~Graphics() {}
+
+    void Graphics::draw(int tileSetId, int tileId, float x, float y) { draw(tileSetId, tileId, (int)x, (int)y); }
 
     void Graphics::draw(int tileSetId, int tileId, int x, int y) {
         auto tileImage = context->getTileFast(tileSetId, tileId);
         if (!tileImage)
             return;
-        context->drawTexture({ x, y },
-							 { tileImage->w, tileImage->h },
-							 tileImage->texture);
+        context->drawTexture({ x, y }, { tileImage->w, tileImage->h }, tileImage->texture);
     }
 }

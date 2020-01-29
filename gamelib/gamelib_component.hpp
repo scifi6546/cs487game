@@ -1,7 +1,8 @@
 #ifndef GAMELIB_COMPONENT_HPP
 #define GAMELIB_COMPONENT_HPP
 
-#include <gamelib_context.hpp>
+#include <gamelib_graphics.hpp>
+#include <gamelib_actor.hpp>
 #include <gamelib_world.hpp>
 
 namespace GameLib {
@@ -20,7 +21,32 @@ namespace GameLib {
     class GraphicsComponent {
     public:
         virtual ~GraphicsComponent() {}
-        virtual void update(Actor& actor, Context& graphics) = 0;
+        virtual void update(Actor& actor, Graphics& graphics) = 0;
+    };
+
+	class SimpleInputComponent : public InputComponent {
+    public:
+        virtual ~SimpleInputComponent() {}
+        void update(Actor& actor) override;
+    };
+
+	class RandomInputComponent : public InputComponent {
+    public:
+        virtual ~RandomInputComponent() {}
+        void update(Actor& actor) override;
+    };
+
+    class SimplePhysicsComponent : public PhysicsComponent {
+    public:
+        virtual ~SimplePhysicsComponent() {}
+
+        void update(Actor& actor, World& world);
+    };
+
+    class SimpleGraphicsComponent : public GraphicsComponent {
+    public:
+        virtual ~SimpleGraphicsComponent() {}
+        virtual void update(Actor& actor, Graphics& graphics);
     };
 }
 

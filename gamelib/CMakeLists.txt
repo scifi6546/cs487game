@@ -8,10 +8,13 @@ add_library(gamelib STATIC
 	gamelib_actor.cpp
 	gamelib_audio.cpp
 	gamelib_command.cpp
+	gamelib_component.cpp
     gamelib_context.cpp
+	gamelib_graphics.cpp
 	gamelib_input_handler.cpp
 	gamelib_locator.cpp
     gamelib_object.cpp
+	gamelib_random.cpp
     gamelib_world.cpp
     hatchetfish_log.cpp
     hatchetfish_stopwatch.cpp
