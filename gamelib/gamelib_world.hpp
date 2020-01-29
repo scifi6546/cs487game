@@ -1,7 +1,8 @@
 #ifndef GAMELIB_WORLD_HPP
 #define GAMELIB_WORLD_HPP
 
-#include <gamelib_actor.hpp>
+#include <gamelib_object.hpp>
+#include <gamelib_graphics.hpp>
 
 namespace GameLib {
     // number of screens in the X direction
@@ -22,6 +23,8 @@ namespace GameLib {
         unsigned charDesc{ 0 };
     };
 
+    class Actor;
+
     // World represents a composite of Objects that live in a 2D grid world
     class World : public Object {
     public:
@@ -30,7 +33,7 @@ namespace GameLib {
 
         void resize(unsigned sizeX, unsigned sizeY);
 
-		void update(float deltaTime);
+        void update(float deltaTime, Graphics& graphics);
 
         void setTile(unsigned x, unsigned y, Tile ptr);
         Tile getTile(unsigned x, unsigned y);
@@ -40,7 +43,7 @@ namespace GameLib {
         std::ostream& writeCharStream(std::ostream& s) const override;
 
         std::vector<Tile> tiles;
-        std::vector<Actor::shared_ptr> actors;
+        std::vector<Actor*> actors;
 
         // number of tiles in the X direction
         unsigned worldSizeX{ WorldPagesX * WorldTilesX };

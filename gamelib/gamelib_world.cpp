@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "gamelib_world.hpp"
+#include <gamelib_world.hpp>
+#include <gamelib_actor.hpp>
 
 namespace GameLib {
     namespace Tokens {
@@ -29,11 +30,11 @@ namespace GameLib {
         worldSizeY = sizeY;
     }
 
-	void World::update(float deltaTime) {
+	void World::update(float deltaTime, Graphics& graphics) {
         for (auto& actor : actors) {
             if (!actor->active)
                 continue;
-            actor->update(deltaTime);
+            actor->update(deltaTime, *this, graphics);
         }
 	}
 

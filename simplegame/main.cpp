@@ -54,17 +54,28 @@ class MovementCommand : public GameLib::InputCommand {
 public:
     const char* type() const override { return "MovementCommand"; }
     bool execute(float amount) override {
-        axis = amount;
-        return true;
+		// apply slight curve
+        if (amount < 0.1f && amount > -0.1f)
+            amount = 0.0f;
+        else if (amount > 0.5f)
+            amount = 1.0f;
+        else if (amount < -0.5f)
+            amount = -1.0f;
+        else if (amount > 0.0f)
+            amount = 0.5f;
+        else
+            amount = -0.5f;
+        return InputCommand::execute(amount);
     }
-    float axis{ 0.0f };
 };
+
+void testSprites(GameLib::Context& context, int spriteCount, int& spritesDrawn, SDL_Texture* testPNG, SDL_Texture* testJPG);
 
 int main(int argc, char** argv) {
     GameLib::Context context(1280, 720, GameLib::WindowDefault);
     GameLib::Audio audio;
     GameLib::InputHandler input;
-    GameLib::Graphics graphics;
+    GameLib::Graphics graphics{ &context };
 
     GameLib::Locator::provide(&context);
     if (context.audioInitialized())
@@ -98,6 +109,7 @@ int main(int argc, char** argv) {
     context.addSearchPath("../assets");
     SDL_Texture* testPNG = context.loadImage("godzilla.png");
     SDL_Texture* testJPG = context.loadImage("parrot.jpg");
+    graphics.setTileSize(32, 32);
     int spriteCount = context.loadTileset(0, 32, 32, "Tiles32x32.png");
     if (!spriteCount) {
         HFLOGWARN("Tileset not found");
@@ -114,6 +126,7 @@ int main(int argc, char** argv) {
     context.loadMusicClip(2, "distoro2.mid");
 
     GameLib::World world;
+    GameLib::Locator::provide(&world);
     std::string worldPath = context.findSearchPath("world.txt");
     if (!world.load(worldPath)) {
         HFLOGWARN("world.txt not found");
@@ -122,9 +135,28 @@ int main(int argc, char** argv) {
     Hf::StopWatch stopwatch;
     double spritesDrawn = 0;
     double frames = 0;
-    GameLib::Actor player;
-    GameLib::MoveAction moveAction;
-    moveAction.setActor(&player);
+    GameLib::Actor player(new GameLib::SimpleInputComponent(),
+						  new GameLib::SimplePhysicsComponent(),
+						  new GameLib::SimpleGraphicsComponent());
+    player.speed = (float)graphics.getTileSizeX();
+    player.position.x = graphics.getCenterX() / (float)graphics.getTileSizeX();
+    player.position.y = graphics.getCenterY() / (float)graphics.getTileSizeY();
+    player.spriteId = 2;
+
+    //GameLib::MoveAction moveAction;
+    //moveAction.setActor(&player);
+
+    world.actors.push_back(&player);
+
+	GameLib::Actor randomPlayer(new GameLib::RandomInputComponent(),
+								new GameLib::SimplePhysicsComponent(),
+								new GameLib::SimpleGraphicsComponent());
+
+	world.actors.push_back(&randomPlayer);
+    randomPlayer.position.x = graphics.getCenterX() / (float)graphics.getTileSizeX();
+    randomPlayer.position.y = graphics.getCenterY() / (float)graphics.getTileSizeY();
+    randomPlayer.spriteId = 1;
+    randomPlayer.speed = (float)graphics.getTileSizeX();
 
     float t0 = stopwatch.Stop_sf();
 
@@ -132,13 +164,12 @@ int main(int argc, char** argv) {
         float t1 = stopwatch.Stop_sf();
         float dt = t1 - t0;
         t0 = t1;
+        GameLib::Context::deltaTime = dt;
+        GameLib::Context::currentTime_s = t1;
+        GameLib::Context::currentTime_ms = t1 * 1000;
 
         context.getEvents();
         input.handle();
-
-        // if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
-        //    context.quitRequested = true;
-        //}
 
         context.clearScreen({ 255, 0, 255, 255 });
 
@@ -151,34 +182,8 @@ int main(int argc, char** argv) {
             }
         }
 
-		// Draw the player here
-		// Later we will change this to a better system
+        world.update(dt, graphics);
 
-        moveAction.axis1X = xaxisCommand.axis;
-        moveAction.axis1Y = yaxisCommand.axis;
-        moveAction.update(dt);
-        glm::vec3 playerPosition = player.worldPosition() * 32.0f;
-        context.drawTexture({ playerPosition.x, playerPosition.y }, { 100, 100 }, testPNG);
-
-        // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
-        // constexpr int SpritesToDraw = 128 * 72 * 8;
-        // An arbitrary number roughly representing HD at 4 layers, 32x32 sprites
-        constexpr int SpritesToDraw = 5;
-        // 60 * 34 * 4;
-        for (int i = 0; i < SpritesToDraw; i++) {
-            GameLib::SPRITEINFO s;
-            s.position = { rand() % 1280, rand() % 720 };
-            s.center = { 0.0f, 0.0f };
-            s.flipFlags = 0;
-            s.angle = (float)(rand() % 360);
-            // context.drawTexture(0, rand() % spriteCount, s);
-            s.position = { rand() % 1280, rand() % 720 };
-            context.drawTexture(s.position, 0, rand() % spriteCount);
-        }
-        spritesDrawn += SpritesToDraw;
-
-        context.drawTexture({ 50, 0 }, { 100, 100 }, testPNG);
-        context.drawTexture({ 250, 250 }, { 100, 100 }, testJPG);
         context.swapBuffers();
         frames++;
         std::this_thread::yield();
@@ -188,4 +193,30 @@ int main(int argc, char** argv) {
     HFLOGDEBUG("Frames/sec = %5.1f", frames / totalTime);
 
     return 0;
+}
+
+void testSprites(GameLib::Context& context, int spriteCount, int& spritesDrawn, SDL_Texture* testPNG, SDL_Texture* testJPG) {
+    // if (context.keyboard.scancodes[SDL_SCANCODE_ESCAPE]) {
+    //    context.quitRequested = true;
+    //}
+
+	// An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
+    // constexpr int SpritesToDraw = 128 * 72 * 8;
+    // An arbitrary number roughly representing HD at 4 layers, 32x32 sprites
+    constexpr int SpritesToDraw = 5;
+    // 60 * 34 * 4;
+    for (int i = 0; i < SpritesToDraw; i++) {
+        GameLib::SPRITEINFO s;
+        s.position = { rand() % 1280, rand() % 720 };
+        s.center = { 0.0f, 0.0f };
+        s.flipFlags = 0;
+        s.angle = (float)(rand() % 360);
+        // context.drawTexture(0, rand() % spriteCount, s);
+        s.position = { rand() % 1280, rand() % 720 };
+        context.drawTexture(s.position, 0, rand() % spriteCount);
+    }
+    spritesDrawn += SpritesToDraw;
+
+    context.drawTexture({ 50, 0 }, { 100, 100 }, testPNG);
+    context.drawTexture({ 250, 250 }, { 100, 100 }, testJPG);
 }

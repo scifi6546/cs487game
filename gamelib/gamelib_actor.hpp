@@ -1,12 +1,18 @@
 #ifndef GAMELIB_ACTOR_HPP
 #define GAMELIB_ACTOR_HPP
 
+#include <gamelib_component.hpp>
 #include <gamelib_object.hpp>
+#include <gamelib_world.hpp>
 
 namespace GameLib {
+    class InputComponent;
+    class PhysicsComponent;
+    class GraphicsComponent;
+
     class Actor : public Object {
     public:
-        Actor();
+        Actor(InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics);
         virtual ~Actor();
 
         using weak_ptr = std::weak_ptr<Actor>;
@@ -20,7 +26,7 @@ namespace GameLib {
         virtual void beginPlay();
 
         // Called each frame the object needs to update itself before drawing
-        virtual void update(float deltaTime);
+        virtual void update(float deltaTime, World& world, Graphics& graphics);
 
         // Called when an object has just started to overlap the bounding box of this object
         virtual void startOverlap(const_weak_ptr otherObject);
@@ -67,10 +73,26 @@ namespace GameLib {
         // maximum coordinates for this bounding box in world space
         glm::vec3 bboxMax;
 
+        // time elapsed for next update
+        float dt;
+
+        // current position
+        glm::vec3 position;
+
+        // current velocity
+        glm::vec3 velocity;
+
+		// maximum speed
+        float speed{ 16.0f };
     protected:
         std::string _updateDesc() override { return { "Actor" }; }
         std::string _updateInfo() override { return { "Actor" }; }
         char charDesc_ = '?';
+
+    private:
+        InputComponent* input_{ nullptr };
+        PhysicsComponent* physics_{ nullptr };
+        GraphicsComponent* graphics_{ nullptr };
     };
 }
 
