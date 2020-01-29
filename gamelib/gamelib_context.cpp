@@ -16,6 +16,10 @@ namespace filesystem = std::filesystem;
 #include <gamelib.hpp>
 
 namespace GameLib {
+    float Context::deltaTime = 0;
+    float Context::currentTime_ms = 0;
+    float Context::currentTime_s = 0;
+
     //////////////////////////////////////////////////////////////////
     // CONSTRUCTOR/DESTRUCTOR ////////////////////////////////////////
     //////////////////////////////////////////////////////////////////
@@ -107,6 +111,8 @@ namespace GameLib {
     }
 
     bool Context::_initScreen(int width, int height, int windowFlags) {
+        screenWidth =width;
+        screenHeight = height;
         return SDL_CreateWindowAndRenderer(width, height, windowFlags, &window_, &renderer_) == 0;
     }
 

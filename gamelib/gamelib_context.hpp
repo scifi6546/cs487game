@@ -24,6 +24,14 @@ namespace GameLib {
         const std::string errorString() const { return errorString_; }
         bool audioInitialized() const { return audioInitialized_; }
 
+		//////////////////////////////////////////////////////////////
+		// TIMING ////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////
+
+		static float currentTime_ms;
+		static float currentTime_s;
+		static float deltaTime;
+
         //////////////////////////////////////////////////////////////
         // SEARCH PATHS //////////////////////////////////////////////
         //////////////////////////////////////////////////////////////
@@ -149,6 +157,8 @@ namespace GameLib {
             std::string name;
         } joysticks[MaxJoysticks];
 
+		int screenWidth{ 0 };
+        int screenHeight{ 0 };
     private:
         bool initialized_{ false };
         bool audioInitialized_{ false };

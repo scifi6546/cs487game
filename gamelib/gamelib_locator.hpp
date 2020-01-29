@@ -8,6 +8,8 @@
 #include <gamelib_input_handler.hpp>
 
 namespace GameLib {
+    class World;
+
     class Locator {
     public:
         static Context* getContext() {
@@ -34,6 +36,9 @@ namespace GameLib {
         }
 		static void provide(IGraphics* graphics) { graphicsService_ = graphics; }
 
+		static void provide(World* world) { world_ = world; }
+        static World* getWorld() { return world_; }
+
     private:
         static Context* context_;
 
@@ -44,6 +49,8 @@ namespace GameLib {
         static IGraphics nullGraphicsService_;
 
         static InputHandler* inputHandler_;
+
+		static World* world_;
     };
 }
 

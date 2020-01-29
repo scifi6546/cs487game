@@ -30,7 +30,14 @@ namespace GameLib {
         // virtual method to process an input button where amount is in the range -1 to 1
         // for axes and 0 to 1 for buttons. If method returns true, then event is considered
         // one time
-        virtual bool execute(float amount) { return true; }
+        virtual bool execute(float amount) {
+            amount_ = amount;
+            return true;
+        }
+
+        float getAmount() const { return amount_; }
+    private:
+        float amount_;
     };
 
     class ActorCommand : public Command {
