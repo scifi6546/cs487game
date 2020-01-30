@@ -155,6 +155,14 @@ namespace GameLib {
             bool enabled{ false };
             SDL_GameController* controller{ nullptr };
             std::string name;
+            glm::vec2 axis1{ 0.0f, 0.0f };
+            glm::vec2 axis2{ 0.0f, 0.0f };
+            float a;
+            float b;
+            float x;
+            float y;
+            float start;
+            float back;
         } joysticks[MaxJoysticks];
 
 		int screenWidth{ 0 };

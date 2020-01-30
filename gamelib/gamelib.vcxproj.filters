@@ -60,13 +60,13 @@
     <ClInclude Include="gamelib_input_handler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gamelib_component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gamelib_graphics.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gamelib_random.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamelib_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

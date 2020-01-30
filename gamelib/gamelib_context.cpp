@@ -174,6 +174,20 @@ namespace GameLib {
             JOYSTICKSTATE& j = joysticks[i];
             if (!j.enabled)
                 continue;
+            short s1x = SDL_GameControllerGetAxis(j.controller, SDL_CONTROLLER_AXIS_LEFTX);
+            short s1y = SDL_GameControllerGetAxis(j.controller, SDL_CONTROLLER_AXIS_LEFTY);
+            short s2x = SDL_GameControllerGetAxis(j.controller, SDL_CONTROLLER_AXIS_RIGHTX);
+            short s2y = SDL_GameControllerGetAxis(j.controller, SDL_CONTROLLER_AXIS_RIGHTY);
+            j.axis1.x = clamp<float>(s1x / 32767.0f, -1.0f, 1.0f);
+            j.axis1.y = clamp<float>(s1y / 32767.0f, -1.0f, 1.0f);
+            j.axis2.x = clamp<float>(s2x / 32767.0f, -1.0f, 1.0f);
+            j.axis2.y = clamp<float>(s2y / 32767.0f, -1.0f, 1.0f);
+            j.a = SDL_GameControllerGetButton(j.controller, SDL_CONTROLLER_BUTTON_A);
+            j.b = SDL_GameControllerGetButton(j.controller, SDL_CONTROLLER_BUTTON_B);
+            j.x = SDL_GameControllerGetButton(j.controller, SDL_CONTROLLER_BUTTON_X);
+            j.y = SDL_GameControllerGetButton(j.controller, SDL_CONTROLLER_BUTTON_Y);
+            j.back = SDL_GameControllerGetButton(j.controller, SDL_CONTROLLER_BUTTON_BACK);
+            j.start = SDL_GameControllerGetButton(j.controller, SDL_CONTROLLER_BUTTON_START);
         }
     }
 

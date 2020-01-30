@@ -30,13 +30,13 @@ namespace GameLib {
         worldSizeY = sizeY;
     }
 
-	void World::update(float deltaTime, Graphics& graphics) {
+    void World::update(float deltaTime, Graphics& graphics) {
         for (auto& actor : actors) {
             if (!actor->active)
                 continue;
             actor->update(deltaTime, *this, graphics);
         }
-	}
+    }
 
     void World::setTile(unsigned x, unsigned y, Tile tile) {
         if (x >= worldSizeX || y >= worldSizeY)
@@ -136,12 +136,23 @@ namespace GameLib {
         // world 2 #  AAAAA     b        #
         // world 3 #<     #  AAAA     B >#
         // world 4 #######################
+
+		std::map<unsigned int, char> cellToChar;
+        for (auto& [k, v] : Tokens::mapCell) {
+            s << "define " << k << " " << v;
+            cellToChar[v] = k;
+        }
+
         s << "worldsize " << worldSizeX << " " << worldSizeY << "\n";
         for (unsigned y = 0; y < worldSizeY; ++y) {
             s << "world " << std::setw(2) << y << " ";
             for (unsigned x = 0; x < worldSizeX; ++x) {
                 auto t = getTile(x, y);
-                s << t.charDesc;
+                if (cellToChar.count(t.charDesc)) {
+                    s << cellToChar[t.charDesc];
+                } else {
+                    s << (char)t.charDesc;
+                }
             }
             s << "\n";
         }
