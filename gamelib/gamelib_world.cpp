@@ -81,7 +81,7 @@ namespace GameLib {
                 s >> c;
                 unsigned val = c;
                 if (Tokens::mapCell.count(c))
-                    val = c;
+                    val = Tokens::mapCell[val];
                 setTile(i, row, Tile(val));
             }
             break;
