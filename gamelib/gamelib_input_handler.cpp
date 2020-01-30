@@ -33,6 +33,17 @@ namespace GameLib {
         CHECKSCANCODE(RIGHT, axis1.x += 1);
         CHECKSCANCODE(UP, axis1.y -= 1);
         CHECKSCANCODE(DOWN, axis1.y += 1);
+
+        for (int i = 0; i < context->MaxGameControllers; i++) {
+			// use first working controller
+            if (context->gameControllers[i].enabled) {
+                axis1.x += context->gameControllers[0].axis1.x;
+                axis1.y += context->gameControllers[0].axis1.y;
+                // axis2.x += context->gameControllers[0].axis2.x;
+                // axis2.y += context->gameControllers[0].axis2.y;
+                break;
+            }
+        }
         axis1X->execute(axis1.x);
         axis1Y->execute(axis1.y);
 

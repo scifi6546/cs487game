@@ -144,14 +144,14 @@ namespace GameLib {
             int mod{ 0 };
         } keyboard;
 
-        // MaxJoysticks reflects the XInput library max of four controllers
-        static constexpr int MaxJoysticks{ 4 };
+        // MaxGameControllers reflects the XInput library max of four controllers
+        static constexpr int MaxGameControllers{ 4 };
 
-        // This is the number of joysticks available
-        unsigned joystickCount{ 0 };
+        // This is the number of gameControllers available
+        unsigned gameControllersConnected{ 0 };
 
         // This is an array of game pad information. If controller pointer is not null, it is available
-        struct JOYSTICKSTATE {
+        struct GAMECONTROLLERSTATE {
             bool enabled{ false };
             SDL_GameController* controller{ nullptr };
             std::string name;
@@ -163,7 +163,7 @@ namespace GameLib {
             float y;
             float start;
             float back;
-        } joysticks[MaxJoysticks];
+        } gameControllers[MaxGameControllers];
 
 		int screenWidth{ 0 };
         int screenHeight{ 0 };

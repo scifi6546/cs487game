@@ -133,10 +133,10 @@ namespace GameLib {
     //////////////////////////////////////////////////////////////////
 
     void Context::_openGameControllers() {
-        joystickCount = std::min<int>(MaxJoysticks, SDL_NumJoysticks());
+        gameControllersConnected = std::min<int>(MaxGameControllers, SDL_NumJoysticks());
 
-        for (int i = 0; i < MaxJoysticks; i++) {
-            JOYSTICKSTATE& j = joysticks[i];
+        for (int i = 0; i < MaxGameControllers; i++) {
+            GAMECONTROLLERSTATE& j = gameControllers[i];
             if (SDL_IsGameController(i)) {
                 // do not open controllers already opened
                 if (j.controller)
@@ -144,7 +144,7 @@ namespace GameLib {
                 j.controller = SDL_GameControllerOpen(i);
                 // reset this joystick if it wasn't opened
                 if (!j.controller) {
-                    j = JOYSTICKSTATE();
+                    j = GAMECONTROLLERSTATE();
                 } else {
                     j.name = SDL_GameControllerNameForIndex(i);
                     HFLOGINFO("Joystick %i '%s' connected", i, j.name.c_str());
@@ -153,25 +153,25 @@ namespace GameLib {
             } else if (j.enabled) {
                 HFLOGINFO("Joystick %i '%s' disconnected", i, j.name.c_str());
                 SDL_GameControllerClose(j.controller);
-                j = JOYSTICKSTATE();
+                j = GAMECONTROLLERSTATE();
             }
         }
     }
 
     void Context::_closeGameControllers() {
-        for (int i = 0; i < MaxJoysticks; i++) {
-            JOYSTICKSTATE& j = joysticks[i];
+        for (int i = 0; i < MaxGameControllers; i++) {
+            GAMECONTROLLERSTATE& j = gameControllers[i];
             if (!j.controller)
                 continue;
             HFLOGINFO("Joystick %i '%s' closed", i, j.name.c_str());
             SDL_GameControllerClose(j.controller);
-            j = JOYSTICKSTATE();
+            j = GAMECONTROLLERSTATE();
         }
     }
 
     void Context::_updateGameControllers() {
-        for (unsigned i = 0; i < joystickCount; i++) {
-            JOYSTICKSTATE& j = joysticks[i];
+        for (unsigned i = 0; i < gameControllersConnected; i++) {
+            GAMECONTROLLERSTATE& j = gameControllers[i];
             if (!j.enabled)
                 continue;
             short s1x = SDL_GameControllerGetAxis(j.controller, SDL_CONTROLLER_AXIS_LEFTX);
@@ -202,6 +202,7 @@ namespace GameLib {
             checkForGameControllers = 100;
             _openGameControllers();
         }
+        _updateGameControllers();
 
         int eventCount{ 0 };
         SDL_Event e;
