@@ -4,7 +4,6 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_library(gamelib STATIC
     gamelib.cpp
-	gamelib_action.cpp
 	gamelib_actor.cpp
 	gamelib_audio.cpp
 	gamelib_command.cpp
