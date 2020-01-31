@@ -111,9 +111,11 @@ namespace GameLib {
     }
 
     bool Context::_initScreen(int width, int height, int windowFlags) {
-        screenWidth =width;
+        screenWidth = width;
         screenHeight = height;
-        return SDL_CreateWindowAndRenderer(width, height, windowFlags, &window_, &renderer_) == 0;
+        bool result = SDL_CreateWindowAndRenderer(width, height, windowFlags, &window_, &renderer_) == 0;
+        windowSurface_ = SDL_GetWindowSurface(window_);
+        return result;
     }
 
     void Context::_kill() {

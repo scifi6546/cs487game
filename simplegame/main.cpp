@@ -53,7 +53,7 @@ class MovementCommand : public GameLib::InputCommand {
 public:
     const char* type() const override { return "MovementCommand"; }
     bool execute(float amount) override {
-		// apply slight curve
+        // apply slight curve
         if (amount < 0.1f && amount > -0.1f)
             amount = 0.0f;
         else if (amount > 0.5f)
@@ -67,6 +67,40 @@ public:
         return InputCommand::execute(amount);
     }
 };
+
+namespace GameLib {
+    class Font {
+    public:
+        Font(Context* context)
+            : context_(context) {}
+        ~Font();
+        bool load(const std::string& path, int ptsize);
+        SDL_Surface* render(const char* text, SDL_Color fg);
+
+    private:
+        Context* context_{ nullptr };
+        TTF_Font* font_{ nullptr };
+    };
+
+    Font::~Font() {
+        if (font_) {
+            TTF_CloseFont(font_);
+            font_ = nullptr;
+        }
+    }
+
+    bool Font::load(const std::string& filename, int ptsize) {
+        std::string path = context_->findSearchPath(filename);
+        font_ = TTF_OpenFont(path.c_str(), ptsize);
+        return font_ != nullptr;
+    }
+
+    SDL_Surface* Font::render(const char* text, SDL_Color fg) {
+        if (!font_)
+            return nullptr;
+        return TTF_RenderText_Blended(font_, text, fg);
+    }
+}
 
 void testSprites(GameLib::Context& context, int spriteCount, int& spritesDrawn, SDL_Texture* testPNG, SDL_Texture* testJPG);
 
@@ -124,6 +158,11 @@ int main(int argc, char** argv) {
     context.loadMusicClip(1, "starbattlemusic2.mp3");
     context.loadMusicClip(2, "distoro2.mid");
 
+    GameLib::Font liberationFont(&context);
+    GameLib::Font urwclassicoFont(&context);
+    liberationFont.load("LiberationSans-Regular.ttf", 18);
+    urwclassicoFont.load("URWClassico-Bold.ttf", 18);
+
     GameLib::World world;
     GameLib::Locator::provide(&world);
     std::string worldPath = context.findSearchPath("world.txt");
@@ -135,25 +174,25 @@ int main(int argc, char** argv) {
     double spritesDrawn = 0;
     double frames = 0;
     GameLib::Actor player(new GameLib::SimpleInputComponent(),
-						  new GameLib::SimpleActorComponent(),
-						  new GameLib::SimplePhysicsComponent(),
-						  new GameLib::SimpleGraphicsComponent());
+                          new GameLib::SimpleActorComponent(),
+                          new GameLib::SimplePhysicsComponent(),
+                          new GameLib::SimpleGraphicsComponent());
     player.speed = (float)graphics.getTileSizeX();
     player.position.x = graphics.getCenterX() / (float)graphics.getTileSizeX();
     player.position.y = graphics.getCenterY() / (float)graphics.getTileSizeY();
     player.spriteId = 2;
 
-    //GameLib::MoveAction moveAction;
-    //moveAction.setActor(&player);
+    // GameLib::MoveAction moveAction;
+    // moveAction.setActor(&player);
 
     world.actors.push_back(&player);
 
-	GameLib::Actor randomPlayer(new GameLib::RandomInputComponent(),
+    GameLib::Actor randomPlayer(new GameLib::RandomInputComponent(),
                                 new GameLib::SimpleActorComponent(),
-								new GameLib::SimplePhysicsComponent(),
-								new GameLib::SimpleGraphicsComponent());
+                                new GameLib::SimplePhysicsComponent(),
+                                new GameLib::SimpleGraphicsComponent());
 
-	world.actors.push_back(&randomPlayer);
+    world.actors.push_back(&randomPlayer);
     randomPlayer.position.x = graphics.getCenterX() / (float)graphics.getTileSizeX();
     randomPlayer.position.y = graphics.getCenterY() / (float)graphics.getTileSizeY();
     randomPlayer.spriteId = 1;
@@ -185,6 +224,17 @@ int main(int argc, char** argv) {
 
         world.update(dt, graphics);
 
+        SDL_Surface* dst = context.windowSurface();
+        SDL_Surface* text = urwclassicoFont.render("Hello, World", { 255, 255, 255, 255 });
+        if (text) {
+            SDL_Texture* texture = SDL_CreateTextureFromSurface(context.renderer(), text);
+            SDL_Rect rect{ 0, 0, text->w, text->h };
+            SDL_BlitSurface(text, nullptr, dst, &rect);
+            context.drawTexture({ 0, 0 }, { text->w, text->h }, texture);
+            SDL_FreeSurface(text);
+            SDL_DestroyTexture(texture);
+        }
+
         context.swapBuffers();
         frames++;
         std::this_thread::yield();
@@ -201,7 +251,7 @@ void testSprites(GameLib::Context& context, int spriteCount, int& spritesDrawn, 
     //    context.quitRequested = true;
     //}
 
-	// An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
+    // An arbitrary number roughly representing 4k at 8 layers, 32x32 sprites
     // constexpr int SpritesToDraw = 128 * 72 * 8;
     // An arbitrary number roughly representing HD at 4 layers, 32x32 sprites
     constexpr int SpritesToDraw = 5;

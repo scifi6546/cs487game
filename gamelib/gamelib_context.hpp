@@ -24,13 +24,13 @@ namespace GameLib {
         const std::string errorString() const { return errorString_; }
         bool audioInitialized() const { return audioInitialized_; }
 
-		//////////////////////////////////////////////////////////////
-		// TIMING ////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+        // TIMING ////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
 
-		static float currentTime_ms;
-		static float currentTime_s;
-		static float deltaTime;
+        static float currentTime_ms;
+        static float currentTime_s;
+        static float deltaTime;
 
         //////////////////////////////////////////////////////////////
         // SEARCH PATHS //////////////////////////////////////////////
@@ -108,11 +108,11 @@ namespace GameLib {
         int getAudioClipCount() const { return (int)audioClips_.size(); }
         // play an audio clip on a channel (-1 if any free channel)
         int playAudioClip(int clipId, int channel = -1);
-		// stop an audio channel from playing
+        // stop an audio channel from playing
         void stopAudioChannel(int channel);
-		// set the volume for a specific channel in the range 0 to 1
+        // set the volume for a specific channel in the range 0 to 1
         void setChannelVolume(int channel, float volume);
-		// get the volume for a specific channel in the range 0 to 1
+        // get the volume for a specific channel in the range 0 to 1
         float getChannelVolume(int channel);
 
         //////////////////////////////////////////////////////////////
@@ -165,8 +165,10 @@ namespace GameLib {
             float back;
         } gameControllers[MaxGameControllers];
 
-		int screenWidth{ 0 };
+        int screenWidth{ 0 };
         int screenHeight{ 0 };
+        SDL_Surface* windowSurface() { return windowSurface_; }
+        SDL_Renderer* renderer() { return renderer_; }
     private:
         bool initialized_{ false };
         bool audioInitialized_{ false };
@@ -174,6 +176,7 @@ namespace GameLib {
         std::string errorString_;
         SDL_Window* window_{ nullptr };
         SDL_Renderer* renderer_{ nullptr };
+        SDL_Surface* windowSurface_{ nullptr };
         SDL_AudioSpec audioSpec_;
         SDL_AudioDeviceID audioDeviceId_{ 0 };
         std::vector<std::string> searchPaths_;
