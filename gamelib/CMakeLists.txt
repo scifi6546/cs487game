@@ -20,7 +20,9 @@ add_library(gamelib STATIC
     hatchetfish_stopwatch.cpp
     )
 
+if (!APPLE)
 target_precompile_headers(gamelib PRIVATE pch.h)
+endif()
 
 install(TARGETS gamelib DESTINATION lib)
 #[[install(TARGETS
