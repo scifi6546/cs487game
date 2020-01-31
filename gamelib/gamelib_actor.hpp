@@ -12,7 +12,7 @@ namespace GameLib {
 
     class Actor : public Object {
     public:
-        Actor(InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics);
+        Actor(InputComponent* input, ActorComponent* actor, PhysicsComponent* physics, GraphicsComponent* graphics);
         virtual ~Actor();
 
         using weak_ptr = std::weak_ptr<Actor>;
@@ -20,13 +20,14 @@ namespace GameLib {
         using const_weak_ptr = const std::weak_ptr<Actor>;
         using const_shared_ptr = const std::shared_ptr<Actor>;
 
+        void unsigned getId() const { return id_; }
         virtual char charDesc() const { return charDesc_; }
 
         // Called whenever the object is introduced into the game
         virtual void beginPlay();
 
         // Called each frame the object needs to update itself before drawing
-        virtual void update(float deltaTime, World& world, Graphics& graphics);
+        void update(float deltaTime, World& world, Graphics& graphics);
 
         // Called when an object has just started to overlap the bounding box of this object
         virtual void startOverlap(const_weak_ptr otherObject);
@@ -82,17 +83,22 @@ namespace GameLib {
         // current velocity
         glm::vec3 velocity;
 
-		// maximum speed
+        // maximum speed
         float speed{ 16.0f };
+
     protected:
         std::string _updateDesc() override { return { "Actor" }; }
         std::string _updateInfo() override { return { "Actor" }; }
         char charDesc_ = '?';
+        unsigned id_{ 0 };
 
     private:
         InputComponent* input_{ nullptr };
         PhysicsComponent* physics_{ nullptr };
         GraphicsComponent* graphics_{ nullptr };
+        ActorComponent* actor_{ nullptr };
+
+        static unsigned idSource_;
     };
 }
 

@@ -2,7 +2,7 @@
 #include <gamelib_action.hpp>
 
 namespace GameLib {
-    Actor Action::nullActor(nullptr, nullptr, nullptr);
+    Actor Action::nullActor(nullptr, nullptr, nullptr, nullptr);
 
     void Action::update(float timeStep) {
         dt = timeStep;

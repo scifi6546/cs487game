@@ -19,6 +19,10 @@ namespace GameLib {
         glm::normalize(actor.velocity);
     }
 
+    void SimpleActorComponent::update(Actor& actor, World& world) {
+        // We could make decisions here, start actions, etc
+    }
+
     void SimplePhysicsComponent::update(Actor& actor, World& world) {
         float ground = 400;
         actor.position += actor.dt * actor.speed * actor.velocity;

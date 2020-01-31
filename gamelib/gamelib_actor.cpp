@@ -3,12 +3,16 @@
 #include <gamelib_locator.hpp>
 
 namespace GameLib {
-    Actor::Actor(InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics)
+    unsigned Actor::idSource_{ 0 };
+
+    Actor::Actor(InputComponent* input, ActorComponent* actor, PhysicsComponent* physics, GraphicsComponent* graphics)
         : transform(1.0f)
         , addlTransform(1.0f)
         , input_(input)
         , physics_(physics)
-        , graphics_(graphics) {}
+        , graphics_(graphics) {
+        id_ = idSource_++;
+    }
 
     Actor::~Actor() {
         delete input_;
@@ -22,6 +26,8 @@ namespace GameLib {
         dt = deltaTime;
         if (input_)
             input_->update(*this);
+        if (actor_)
+            actor_->update(*this, world);
         if (physics_)
             physics_->update(*this, world);
         if (graphics_)

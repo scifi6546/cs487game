@@ -12,6 +12,12 @@ namespace GameLib {
         virtual void update(Actor& actor) = 0;
     };
 
+    class ActorComponent {
+    public:
+        virtual ~ActorComponent() {}
+        virtual void update(Actor& actor, World& world) = 0;
+    };
+
     class PhysicsComponent {
     public:
         virtual ~PhysicsComponent() {}
@@ -24,16 +30,28 @@ namespace GameLib {
         virtual void update(Actor& actor, Graphics& graphics) = 0;
     };
 
-	class SimpleInputComponent : public InputComponent {
+    class SimpleInputComponent : public InputComponent {
     public:
         virtual ~SimpleInputComponent() {}
         void update(Actor& actor) override;
     };
 
-	class RandomInputComponent : public InputComponent {
+    class RandomInputComponent : public InputComponent {
     public:
         virtual ~RandomInputComponent() {}
         void update(Actor& actor) override;
+    };
+
+    class SimpleActorComponent : public ActorComponent {
+    public:
+        virtual ~SimpleActorComponent() {}
+        void update(Actor& actor, World& world) override;
+    };
+
+    class RandomActorComponent : public ActorComponent {
+    public:
+        virtual ~RandomActorComponent() {}
+        void update(Actor& actor, World& world) override;
     };
 
     class SimplePhysicsComponent : public PhysicsComponent {

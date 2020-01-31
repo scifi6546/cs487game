@@ -136,6 +136,7 @@ int main(int argc, char** argv) {
     double spritesDrawn = 0;
     double frames = 0;
     GameLib::Actor player(new GameLib::SimpleInputComponent(),
+						  new GameLib::SimpleActorComponent(),
 						  new GameLib::SimplePhysicsComponent(),
 						  new GameLib::SimpleGraphicsComponent());
     player.speed = (float)graphics.getTileSizeX();
@@ -149,6 +150,7 @@ int main(int argc, char** argv) {
     world.actors.push_back(&player);
 
 	GameLib::Actor randomPlayer(new GameLib::RandomInputComponent(),
+                                new GameLib::SimpleActorComponent(),
 								new GameLib::SimplePhysicsComponent(),
 								new GameLib::SimpleGraphicsComponent());
 
