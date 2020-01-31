@@ -9,6 +9,7 @@ namespace GameLib {
     class InputComponent;
     class PhysicsComponent;
     class GraphicsComponent;
+    class ActorComponent;
 
     class Actor : public Object {
     public:
@@ -20,7 +21,7 @@ namespace GameLib {
         using const_weak_ptr = const std::weak_ptr<Actor>;
         using const_shared_ptr = const std::shared_ptr<Actor>;
 
-        void unsigned getId() const { return id_; }
+        unsigned getId() const { return id_; }
         virtual char charDesc() const { return charDesc_; }
 
         // Called whenever the object is introduced into the game
