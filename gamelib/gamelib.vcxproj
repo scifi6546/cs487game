@@ -158,7 +158,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="gamelib.hpp" />
-    <ClInclude Include="gamelib_action.hpp" />
     <ClInclude Include="gamelib_actor.hpp" />
     <ClInclude Include="gamelib_component.hpp" />
     <ClInclude Include="gamelib_audio.hpp" />
@@ -177,7 +176,6 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="gamelib_action.cpp" />
     <ClCompile Include="gamelib_actor.cpp" />
     <ClCompile Include="gamelib_component.cpp" />
     <ClCompile Include="gamelib_audio.cpp" />

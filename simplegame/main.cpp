@@ -2,7 +2,6 @@
 // by Dr. Jonathan Metzgar et al
 // UAF CS Game Design and Architecture Course
 #include <gamelib.hpp>
-#include <gamelib_action.hpp>
 
 #pragma comment(lib, "gamelib.lib")
 
