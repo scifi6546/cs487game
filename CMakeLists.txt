@@ -1,4 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
+if(LINUX)
+    set(CMAKE_CXX_COMPILER "/bin/g++-9")
+endif()
 project(cs487game)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
