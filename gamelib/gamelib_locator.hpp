@@ -27,7 +27,7 @@ namespace GameLib {
         static void provide(IAudio* audio) { audioService_ = audio; }
 
         static void provide(InputHandler* input) { inputHandler_ = input; }
-        static InputHandler* getInput() { return inputHandler_; }
+        static InputHandler* getInput() {return inputHandler_; }
 
 		static IGraphics* getGraphics() {
             if (graphicsService_)

@@ -6,13 +6,13 @@
 namespace GameLib {
     void SimpleInputComponent::update(Actor& actor) {
         auto axis1 = Locator::getInput()->axis1X;
-        if (axis1){
+        if (axis1)
             actor.velocity.x = axis1->getAmount();
-	}
         auto axis2 = Locator::getInput()->axis1Y;
         if (axis2)
             actor.velocity.y = axis2->getAmount();
 
+	HFLOGDEBUG("RAN SIMPLE INPUT Input: %f",axis1);
 	
     }
 
@@ -23,12 +23,7 @@ namespace GameLib {
     }
     void MissileInputComponent::update(Actor& actor){
 	    actor.velocity=glm::vec3(0.0,0.0,0.0);
-	    if(actor.hp<5){
-		actor.spriteId=3;
-		actor.collide_dist=1.0;
-	    }
-	    actor.hp-=watch.Stop_sf()*0.0005;
-
+	    actor.hp-=watch.Stop_sf()*0.005;
 
     }
 
@@ -46,20 +41,17 @@ namespace GameLib {
     }
 
     void SimplePhysicsComponent::update(Actor& actor, World& world) {
-	    actor.position += actor.dt * actor.speed * actor.velocity;
-	    auto act=world.actors[0];
 	    for(auto& act:world.actors){
 		    if(act->getId()==actor.getId())
-		   	continue;
+			    continue;
 		    else{
-			glm::vec3 vec = act->position-actor.position;
-			float dist = glm::length(vec);
-			if(dist<=act->collide_dist){
-				actor.hp-=5.0;
+			
+			if(glm::length(act->worldPosition()-actor.worldPosition())<=actor.collide_dist){
+				actor.hp-=1.0;
 			}
 		    }
 
-    	}
+	    }
     }
 
     void SimpleGraphicsComponent::update(Actor& actor, Graphics& graphics) {

@@ -42,6 +42,14 @@ namespace GameLib {
         void update(Actor& actor) override;
     };
 
+    class MissileInputComponent: public InputComponent{
+    public:
+        virtual ~MissileInputComponent() {}
+        void update(Actor& actor) override;
+	Hf::StopWatch watch;
+    };
+
+
     class SimpleActorComponent : public ActorComponent {
     public:
         virtual ~SimpleActorComponent() {}

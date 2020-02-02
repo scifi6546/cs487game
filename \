@@ -3,6 +3,7 @@
 // UAF CS Game Design and Architecture Course
 #include <gamelib.hpp>
 #include <gamelib_random.hpp>
+#include <stdio.h>
 
 #pragma comment(lib, "gamelib.lib")
 
@@ -171,6 +172,7 @@ int main(int argc, char** argv) {
     if (!world.load(worldPath)) {
         HFLOGWARN("world.txt not found");
     }
+    std::vector<GameLib::Actor*> missiles;
 
     Hf::StopWatch stopwatch;
     double spritesDrawn = 0;
@@ -193,28 +195,42 @@ int main(int argc, char** argv) {
 
     float t0 = stopwatch.Stop_sf();
     float last_spawn=t0;
-    float spawn_diff = 1.0;
-    float score=0;
+    float cleanup_time = 20;
+    float last_cleanup=t0;
+    float spawn_diff = 10.0;
 
     while (!context.quitRequested) {
 	
         float t1 = stopwatch.Stop_sf();
 	if(t1-last_spawn>spawn_diff){
-		spawn_diff-=spawn_diff/40.0;
+	spawn_diff-=spawn_diff/40.0;
+        HFLOGWARN("Spawned missile");
+		
 		last_spawn=t1;
-    		GameLib::Actor* missile = new GameLib::Actor(new GameLib::MissileInputComponent(),
+    GameLib::Actor* missile = new GameLib::Actor(new GameLib::MissileInputComponent(),
                                 new GameLib::SimpleActorComponent(),
                                 new GameLib::SimplePhysicsComponent(),
                                 new GameLib::SimpleGraphicsComponent());
-    		missile->position.x = graphics.getCenterX() / (float)graphics.getTileSizeX()+rand.normal()*30.0;
+    missile->position.x = graphics.getCenterX() / (float)graphics.getTileSizeX()+rand.normal()*20.0;
 
-    		missile->position.y = graphics.getCenterY() / (float)graphics.getTileSizeY()+rand.normal()*30.0;
-    		missile->spriteId = 1;
-    		missile->speed = (float)graphics.getTileSizeX();
-    		world.actors.push_back(missile);
+    missile->position.y = graphics.getCenterY() / (float)graphics.getTileSizeY()+rand.normal()*20.0;
+    missile->spriteId = 1;
+    missile->speed = (float)graphics.getTileSizeX();
+    world.actors.push_back(missile);
+
+
+	}
+	if(t1-last_cleanup>cleanup_time){
+		HFLOGWARN("cleaned up actors");
+		if(world.actors.size()>1){
+			last_cleanup=t1;
+			for(int i=1;i<world.actors.size();i++){
+				delete world.actors[i];
+			}
+			world.actors.resize(1);
+		}
 	}
         float dt = t1 - t0;
-	score+=dt;
         t0 = t1;
         GameLib::Context::deltaTime = dt;
         GameLib::Context::currentTime_s = t1;
@@ -237,9 +253,7 @@ int main(int argc, char** argv) {
         world.update(dt, graphics);
 
         SDL_Surface* dst = context.windowSurface();
-	char score_text[100];
-	sprintf(score_text,"Score: %i",(int) score);
-        SDL_Surface* text = urwclassicoFont.render(score_text, { 255, 255, 255, 255 });
+        SDL_Surface* text = urwclassicoFont.render("Hello, World", { 255, 255, 255, 255 });
         if (text) {
             SDL_Texture* texture = SDL_CreateTextureFromSurface(context.renderer(), text);
             SDL_Rect rect{ 0, 0, text->w, text->h };

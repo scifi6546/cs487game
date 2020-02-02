@@ -86,6 +86,9 @@ namespace GameLib {
 
         // maximum speed
         float speed{ 16.0f };
+	//Health of actor
+	float hp=10;
+	float collide_dist=0.0;
 
     protected:
         std::string _updateDesc() override { return { "Actor" }; }

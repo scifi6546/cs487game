@@ -31,11 +31,19 @@ namespace GameLib {
     }
 
     void World::update(float deltaTime, Graphics& graphics) {
-        for (auto& actor : actors) {
-            if (!actor->active)
+	std::vector<int> to_delete={};
+        for (int i=0;i<actors.size();i++) {
+            if (!actors[i]->active)
                 continue;
-            actor->update(deltaTime, *this, graphics);
+            actors[i]->update(deltaTime, *this, graphics);
+	    if(actors[i]->hp<0.0){
+	//	delete actors[i];
+		to_delete.push_back(i);
+	   }
         }
+	for(int i=to_delete.size()-1;i>=0;i--){
+		actors.erase(actors.begin()+to_delete[i]);
+	}
     }
 
     void World::setTile(unsigned x, unsigned y, Tile tile) {
